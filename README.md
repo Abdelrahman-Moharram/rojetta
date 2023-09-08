@@ -1,5 +1,5 @@
 # apps
-## accounts 
+## Auth 
 
 
 ### Views
