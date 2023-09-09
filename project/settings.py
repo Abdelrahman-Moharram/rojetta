@@ -75,18 +75,37 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = "Auth.User"
 WSGI_APPLICATION = 'project.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     # 'default': {
+
+#     #     'ENGINE': env('DB_ENGINE'),
+
+#     #     'NAME': env('NAME'),
+
+#     #     'USER': env('USER'),
+
+#     #     'PASSWORD': env('PASSWORD'),
+
+#     #     'HOST': env('HOST'),
+
+#     #     'PORT': env('PORT'),
+
+#     # }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': env('DB_ENGINE'),
-        'NAME': BASE_DIR / env('NAME'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR/ 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -125,9 +144,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "static/",
 ]
-MEDIA_ROOT="media/"
+MEDIA_ROOT="media"
+MEDIA_URL="media/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

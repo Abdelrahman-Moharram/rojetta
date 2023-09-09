@@ -1,95 +1,109 @@
 from django.db import models
 from django.contrib.auth.models import User,BaseUserManager,AbstractBaseUser
+from django.utils.text import slugify
 
 
+
+def imagesave(instance,filename):
+    imagename , extension = filename.split(".")
+    return "users/%s/%s/"%(instance.id,"images", extension)
+
+
+
+def cap(string):
+    new=string[0].upper()
+    for i in range(1,len(string),1):
+        if string[i-1] == '-':
+            new += string[i].upper()
+        else:
+            new +=string[i]
+    return new
 
 
 class accountManager(BaseUserManager):
-    def create_user(self,username,fname, lname, email, phonenumber,password = None):
-        if not username:
-            raise ValueError('user must have an username')
+    def create_user(self,email,fname,lname,phone,password = None):
+        if not email:
+            raise ValueError('user must have an email')
 
         if not fname:
-            raise ValueError('Unvalid Null Value for first name')
+            raise ValueError('Unvalid Null Value')
         
         if not lname:
-            raise ValueError('Unvalid Null Value for last name')
+            raise ValueError('Unvalid Null Value')
         
-        if not email:
-            raise ValueError('Unvalid Null Value for email')
+        if not phone:
+            raise ValueError('Unvalid Null Value')
         
-        if not phonenumber:
-            raise ValueError('Unvalid Null Value for phonenumber')
-
         user = self.model(
-            username    = username,
-            fname       = fname,
-            lname       = lname,
-            email       = email,
-            phonenumber = phonenumber,
+            email = self.normalize_email(email),
+            phone = phone,
+            fname = fname,
+            lname = lname
         )
+
         user.set_password(password)
         user.save(using = self._db)
         return user
     
 
-    def create_superuser(self,username,fname, lname, email, phonenumber,password):
+    def create_superuser(self,email,fname,lname,phone,password):
         user = self.create_user(
-            username = username,
+            email = self.normalize_email(email),
+            phone = phone,
             fname = fname,
             lname = lname,
-            email = email,
-            phonenumber = phonenumber,
             password=password,
         )
+        user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
+        
         return user 
 
 
 
 
 
-
 class User(AbstractBaseUser):
-    fname           = models.CharField(max_length=90,verbose_name="Full Name",unique=False)
-    lname           = models.CharField(max_length=90,verbose_name="Full Name",unique=False)
-    email           = models.CharField(unique = True, max_length=60)
-    phonenumber     = models.CharField(unique = True, max_length=60)
-    username        = models.CharField(unique = True, max_length=60)
-    password        = models.CharField(max_length=150)
-    is_active       = models.BooleanField(default=True)
-    is_staff        = models.BooleanField(default=False)
-    is_superuser    = models.BooleanField(default=False)
-    date_joined     = models.DateTimeField(auto_now=True, auto_now_add=False)
-
-
     
-    USERNAME_FIELD  = 'username'
-    REQUIRED_FIELDS = ['fname', 'lname', 'email', 'phonenumber']
+    fname         = models.CharField(max_length=20,verbose_name="الاسم الاول",unique=False)
+    lname         = models.CharField(max_length=20,verbose_name="الاسم الاخير",unique=False)
+    phone         = models.CharField(max_length=12, verbose_name="رقم الهاتف",unique=True)
+    email         = models.EmailField(unique = True, max_length=254)
+    password      = models.CharField(max_length=150)
+    # image         = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None)
+    joined_at     = models.DateField(auto_now_add=True,verbose_name="تاريخ الانضمام")
+    username      = models.SlugField(blank=True,null=True)
+    is_admin      = models.BooleanField(default=False)
+    is_staff      = models.BooleanField(default=False)
+    is_superuser  = models.BooleanField(default=False)
+
+    USERNAME_FIELD  = 'email'
+    REQUIRED_FIELDS = ['fname','lname','phone']
 
     objects = accountManager()
-    def save(self, *args, **kwargs):
-        # Save the provided password in hashed format
-        user = super(User, self)
-        user.set_password(self.password)
-        super().save(*args, **kwargs)
-        return user
 
+
+
+    def save(self,*args, **kwargs):
+        self.username = slugify(self.fname+"-"+self.lname)
+        self.username = cap(self.username)
+        super(User,self).save(*args,**kwargs)
+
+
+    
     def __str__(self):
-        return self.username
+        return self.username or self.email
 
-    def has_perm(self , perm , obj = None):
-        return self.is_superuser
+
+    def has_perm(self , perm , obj = None): # to not access admin panel
+        return self.is_admin
     
     def has_module_perms(self,app_label):
-        return self.is_staff
+        return True
 
-
-
-
-
+    
 
 
 
@@ -136,7 +150,7 @@ class Specialization(models.Model):
 
 class Doctor(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
-    image           = models.FileField(upload_to="media/Doctors/", max_length=100, verbose_name="صورة شخصية")
+    image           = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None, verbose_name="صورة شخصية")
     coverletter     = models.TextField(null=True, verbose_name="تفاصيل")
     bio             = models.CharField(max_length=255, verbose_name="عنوان سيرة ذاتية", blank=True)
     skills          = models.ManyToManyField(Skill, verbose_name="المهارات")
@@ -147,6 +161,7 @@ class Doctor(models.Model):
 
 
 class Clinic(models.Model):
+    doctor          = models.ForeignKey(Doctor, on_delete=models.CASCADE) # doctor may has more than one Clinic
     government      = models.ForeignKey(Government, on_delete=models.PROTECT,verbose_name="المحافظة")
     state           = models.ForeignKey(State, on_delete=models.PROTECT, verbose_name="المنطقة")
     detailLocation  = models.CharField(max_length=555, verbose_name="العنوان المفصل")
@@ -157,6 +172,6 @@ class Clinic(models.Model):
 
 class Patient(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
-    image           = models.FileField(upload_to="media/Patients/", max_length=100, verbose_name="صورة شخصية")
+    image           = models.ImageField(default="users/logo.png",upload_to=imagesave, verbose_name="صورة شخصية", null=True, height_field=None, width_field=None)
     government      = models.ForeignKey(Government, on_delete=models.PROTECT,verbose_name="المحافظة")
     state           = models.ForeignKey(State, on_delete=models.PROTECT, verbose_name="المنطقة")
