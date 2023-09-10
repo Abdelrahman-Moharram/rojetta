@@ -7,27 +7,6 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@login_required
-def index(request): ## for sub-admin
-    return render(request, "Auth/index.html", {"users":User.objects.all()})
-
-@login_required
-def addUser(request): ## for sub-admin & super-admin
-    form   = add_user_form()
-    if request.method == "POST":
-        if request.POST['password'] != request.POST['retypepassword']:
-            messages.error(request,"Password doesn't match Retype Password")
-            return redirect("Auth:register")
-        form = add_user_form(request.POST)
-
-        if form.is_valid():
-            form = form.save()
-            messages.info(request,form.username+" added succesfully")
-            if "_submit" in  request.POST:
-                return redirect("Auth:add")
-            return redirect("Auth:index") # جدول فيه كل اليوزرز
-    return render(request,"Auth/addUser.html",{"form":form})
-
 
 
 def register(request):
@@ -75,7 +54,7 @@ def user_login(request):
     if request.user.username:
         return redirect("home:index")
     if request.method == "POST":
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
         print("User logged: ", request.POST)
         if user is not None:
             login(request, user)
@@ -83,14 +62,14 @@ def user_login(request):
 
             ## save date in session should be string not date -> we made [tagned_date, end_date] in str form
             user._mutable = True
-            user.date_joined = str(user.date_joined)
+            user.joined_at = str(user.joined_at)
 
             # save user in sessions
             request.session.user = user
 
             # logged in successfully
             messages.info(request," أهلا "+request.user.username+" مرحبا بعودتك")
-            return redirect("Auth:profile", militry_id=request.user.militry_id) # تمام القوة انهارده
+            return redirect("home:profile", username=request.user.username) # تمام القوة انهارده
         
         # no user 
         messages.error(request,"فشل تسجيل الدخول تأكد من الرقم العسكري وكلمة المرور")
@@ -113,6 +92,40 @@ def logout_user(request):
         logout(request)
         return redirect("home:index")
 
+
+
+
+################################## NOT IMPLEMENTED YET ##################################
+
+@login_required
+def index(request): ## for sub-admin
+    return render(request, "Auth/index.html", {"users":User.objects.all()})
+
+@login_required
+def addUser(request): ## for sub-admin & super-admin
+    form   = add_user_form()
+    if request.method == "POST":
+        if request.POST['password'] != request.POST['retypepassword']:
+            messages.error(request,"Password doesn't match Retype Password")
+            return redirect("Auth:register")
+        form = add_user_form(request.POST)
+
+        if form.is_valid():
+            form = form.save()
+            messages.info(request,form.username+" added succesfully")
+            if "_submit" in  request.POST:
+                return redirect("Auth:add")
+            return redirect("Auth:index") # جدول فيه كل اليوزرز
+    return render(request,"Auth/addUser.html",{"form":form})
+
+
+
+
+
+
+
+
+
 @login_required
 def edit(request, militry_id):
     user = User.objects.get(militry_id=militry_id)
@@ -126,13 +139,12 @@ def edit(request, militry_id):
         user.save()
         messages.info(request,"تم تعديل بيانات "+user.fullname+ " بنجاح")
         return redirect("Auth:index")
-    return render(request,"Auth/addUser.html",{"u":user,
-                                                   "workCategories":Work_Category.objects.all(),
-                                                    "moahltypes":Moahl_Type.objects.all(),
-                                                    "ranks":Rank.objects.all()
-                                                })
+    return render(request,"Auth/addUser.html",{"u":user})
 @login_required
 def delete(request, militry_id):
     user = User.objects.get(militry_id=militry_id)
     user.delete()
     return redirect("Auth:index")
+
+
+######################################################################################################

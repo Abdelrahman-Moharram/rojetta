@@ -71,10 +71,14 @@ class User(AbstractBaseUser):
     lname         = models.CharField(max_length=20,verbose_name="الاسم الاخير",unique=False)
     phone         = models.CharField(max_length=12, verbose_name="رقم الهاتف",unique=True)
     email         = models.EmailField(unique = True, max_length=254)
-    password      = models.CharField(max_length=150)
-    # image         = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None)
-    joined_at     = models.DateField(auto_now_add=True,verbose_name="تاريخ الانضمام")
     username      = models.SlugField(blank=True,null=True)
+    password      = models.CharField(max_length=150)
+    
+    # image         = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None)
+    
+    joined_at     = models.DateField(auto_now_add=True,verbose_name="تاريخ الانضمام")
+    is_active     = models.BooleanField(default=True)
+    
     is_admin      = models.BooleanField(default=False)
     is_staff      = models.BooleanField(default=False)
     is_superuser  = models.BooleanField(default=False)

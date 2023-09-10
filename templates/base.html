@@ -45,7 +45,7 @@
       <!-- Collapsible wrapper -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-lg-0" href="#">
+        <a class="navbar-brand mt-2 mt-lg-0" href="{% url 'home:index' %}">
           <img
             src="{% static 'imgs/rojetta-low-resolution-logo-color-on-transparent-background.png' %}"
             height="45"
@@ -73,11 +73,13 @@
       <!-- Right elements -->
       <div class="d-flex align-items-center">
         <!-- Icon -->
-        <a class="text-reset me-3" href="#">
+        <!-- <a class="text-reset me-3" href="#">
           <i class="fas fa-shopping-cart"></i>
-        </a>
+        </a> -->
   
         <!-- Notifications -->
+        
+        {% if request.user.is_authenticated  %}
         <div class="dropdown">
           <a
             class="text-reset me-3 dropdown-toggle hidden-arrow"
@@ -128,16 +130,22 @@
             aria-labelledby="navbarDropdownMenuAvatar"
           >
             <li>
-              <a class="dropdown-item" href="#">My profile</a>
+              <a class="dropdown-item" href="{% url 'home:profile' request.user.username %}">{{request.user.username}}</a>
             </li>
             <li>
               <a class="dropdown-item" href="#">Settings</a>
             </li>
             <li>
-              <a class="dropdown-item" href="#">Logout</a>
+              <a class="dropdown-item" href="{% url 'Auth:logout' %}">Logout</a>
             </li>
           </ul>
         </div>
+        {% else %}
+        <a class="btn btn-primary" href="{% url 'Auth:login' %}">Login</a>
+        <span class="mx-2 text-white">or</span>
+        <a class="btn btn-outline-primary text-white" href="{% url 'Auth:register' %}">Register</a>
+        {% endif %}
+          
       </div>
       <!-- Right elements -->
     </div>
