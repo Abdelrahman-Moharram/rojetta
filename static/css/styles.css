@@ -1,0 +1,12 @@
+.btn {
+    padding: .55rem 1.5rem .45rem;
+  }
+.brand-color {
+    color: rgb(238, 62, 56);
+}
+.brand-bg:hover{
+    color: rgb(238, 62, 56) !important;
+}
+.brand-bg {
+    background-color: rgb(238, 62, 56);
+}

@@ -107,6 +107,9 @@ def profile(request,militry_id):
 
 @login_required
 def logout_user(request):
+        # user = User.objects.get(user=request.user)
+        # user.is_active = False
+        # user.save()
         logout(request)
         return redirect("home:index")
 

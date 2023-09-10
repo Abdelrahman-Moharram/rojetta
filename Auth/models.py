@@ -167,6 +167,10 @@ class Clinic(models.Model):
     detailLocation  = models.CharField(max_length=555, verbose_name="العنوان المفصل")
     mapsLocation    = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان علي خرائط جوجل")
     price           = models.FloatField(verbose_name="سعر الكشف")
+    is_opned        = models.BooleanField(verbose_name="العيادة مفتوحة", default=False)
+    last_opened     = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return str(self.doctor)
 
 
 
