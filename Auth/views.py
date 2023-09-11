@@ -14,35 +14,41 @@ def register(request):
         return redirect("home:index")
     form   = add_user_form()
     if request.method == "POST":
-        if request.POST['password'] != request.POST['retypepassword']:
-            messages.error(request,"Password doesn't match Retype Password")
-            return redirect("Auth:register")
+        # if request.POST['password'] != request.POST['retypepassword']:
+        #     messages.error(request,"Password doesn't match Retype Password")
+        #     return redirect("Auth:register")
         form = add_user_form(request.POST)
+        print("\n\n\n\n\n-->",request.POST,"\n\n\n\n\n")
         if form.is_valid():
-            form = form.save()
-
+            f = form.save(commit=False)
+            if "is_doctor" in request.POST:
+                f.is_doctor = True
+                f.save()
+            else:
+                f.is_doctor = False
+                f.save()
             # after saving form we should signin to account
-            user = authenticate(request, username=request.POST['militry_id'], password=request.POST['password'])
+            user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
             if user is not None:
                 login(request, user)
                 ## save date in session should be string not date -> we made [tagned_date, end_date] in str form
                 user._mutable = True
-                user.tagned_date = str(user.tagned_date)
-                user.end_date = str(user.end_date)
+                user.joined_at = str(user.joined_at)
 
                 # save user in sessions
                 request.session.user = user
             
                 # logged in successfully after regestration
-                messages.info(request,form.fullname+" added succesfully")
-                return redirect("Auth:profile", militry_id=form.militry_id) # تمام القوة انهارده
+                messages.info(request,user.username+" added succesfully")
+                return redirect("home:profile", username=user.username) 
             
             # logged in Failed after regestration
             messages.error(request,"Login Failed after registeration contact admin")
             return redirect("Auth:register")
         # Registration failed
         messages.error(request,"Registration failed")
-        return redirect("Auth:register")
+        return render(request,"Auth/register.html",{"form":form})
+
     
     # GET request should pass here
     return render(request,"Auth/register.html",{"form":form})
@@ -55,10 +61,9 @@ def user_login(request):
         return redirect("home:index")
     if request.method == "POST":
         user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
-        print("User logged: ", request.POST)
         if user is not None:
+
             login(request, user)
-            print("User logged: ", user)
 
             ## save date in session should be string not date -> we made [tagned_date, end_date] in str form
             user._mutable = True
@@ -68,27 +73,24 @@ def user_login(request):
             request.session.user = user
 
             # logged in successfully
-            messages.info(request," أهلا "+request.user.username+" مرحبا بعودتك")
+            messages.info(request," welcome back "+request.user.username)
             return redirect("home:profile", username=request.user.username) # تمام القوة انهارده
         
         # no user 
-        messages.error(request,"فشل تسجيل الدخول تأكد من الرقم العسكري وكلمة المرور")
+        messages.error(request,"Login failed with Email or Password")
         return redirect("Auth:login")
     # get request - NOT POST
     return render(request,"Auth/login.html",{})
 
 
 
-@login_required
-def profile(request,militry_id):
-    return render(request,"Auth/profile.html",{"user":User.objects.get(militry_id=militry_id)})
+# @login_required
+def profile(request,username):
+    return render(request,"Auth/profile.html",{"user":User.objects.get(username=username)})
 
 
 @login_required
 def logout_user(request):
-        # user = User.objects.get(user=request.user)
-        # user.is_active = False
-        # user.save()
         logout(request)
         return redirect("home:index")
 

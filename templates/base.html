@@ -153,9 +153,17 @@
   </nav>
   <!-- Navbar -->
 
+
+  
+    
+    {% for message in messages %}
+      <div class="alert alert-primary" role="alert">
+        {{message.message}}
+    </div>
+    {% endfor %}
+      
     {% block body %}
     {% endblock body %}
-
 
 <!-- MDB -->
     <script

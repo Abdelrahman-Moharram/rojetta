@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    sign up
+{% endblock title %}
+    
+
+{% block body %}
+
+
+<div class="container w-25 my-5">
+  <form method="post">
+    {% csrf_token %}
+    <!-- Email input -->
+        <!-- 2 column grid layout with text inputs for the first and last names -->
+        <div class="row my-4">
+          <div class="col">
+            <div class="form-outline">
+              <input value="{{form.fname.value |default_if_none:'' }}" name="fname" type="text" id="form3Example1" class="form-control {% if form.errors.fname %}is-invalid{% endif %}" />
+              <label class="form-label" for="form3Example1">First name</label>
+              {% for err in form.errors.fname %}
+               <div class="invalid-feedback">{{err}}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-outline">
+              <input value="{{form.lname.value |default_if_none:'' }}" name="lname" type="text" id="form3Example2" class="form-control {% if form.errors.lname %}is-invalid{% endif %}" />
+              <label class="form-label" for="form3Example2">Last name</label>
+              {% for err in form.errors.lname %}
+               <div class="invalid-feedback">{{err}}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      
+        <!-- Email input -->
+        <div class="form-outline my-4">
+          <input value="{{form.email.value |default_if_none:'' }}" name="email" type="email" id="form3Example3" class="form-control {% if form.errors.email %}is-invalid{% endif %}" />
+          <label class="form-label" for="form3Example3">Email address</label>
+            {% for err in form.errors.email %}
+            <div class="invalid-feedback">{{err}}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-outline my-4">
+            <input value="{{form.phone.value |default_if_none:'' }}" type="text" name="phone" id="form3Phone" class="form-control {% if form.errors.phone %}is-invalid{% endif %}" />
+            <label class="form-label"  for="form3Phone">Phone Number</label>
+            {% for err in form.errors.phone %}
+               <div class="invalid-feedback">{{err}}</div>
+              {% endfor %}
+          </div>
+      
+        <!-- Password input -->
+        <div class="form-outline my-4">
+          <input value="{{form.password.value |default_if_none:'' }}" autocomplete="on" type="password" name="password" id="form3Example4" class="form-control {% if form.errors.password %}is-invalid{% endif %}" />
+          <label class="form-label" for="form3Example4">Password</label>
+          
+          {% for err in form.errors.password %}
+          <div class="invalid-feedback">{{err}}</div>
+         {% endfor %}
+            
+
+        </div>
+        
+        <div class="form-outline my-4">
+            <input value="{{form.retypepassword.value |default_if_none:'' }}"  autocomplete="on" type="password" name="retypepassword" id="form3Example5" class="form-control {% if form.errors.retypepassword %}is-invalid{% endif %}" />
+            <label class="form-label" for="form3Example5">Re-type Password</label>
+            {% for err in form.errors.retypepassword %}
+          <div class="invalid-feedback">{{err}}</div>
+         {% endfor %}
+          </div>
+        <!-- Checkbox -->
+        <div class="form-check d-flex justify-content-center my-4">
+          <input class="form-check-input me-2" type="checkbox" name="is_doctor" id="form2Example33" />
+          <label class="form-check-label" for="form2Example33">
+            sign up as a doctor
+          </label>
+        </div>
+        
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">Sign up</button>
+      
+        <!-- Register buttons -->
+        <div class="text-center">
+          <p>or sign up with:</p>
+          <button type="button" class="btn btn-secondary btn-floating mx-1">
+            <i class="fab fa-facebook-f"></i>
+          </button>
+      
+          <button type="button" class="btn btn-secondary btn-floating mx-1">
+            <i class="fab fa-google"></i>
+          </button>
+      
+          <button type="button" class="btn btn-secondary btn-floating mx-1">
+            <i class="fab fa-twitter"></i>
+          </button>
+      
+          <a type="button" class="btn btn-secondary btn-floating mx-1">
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+      </form>
+  </form>
+</div>
+{% endblock body %}
+    

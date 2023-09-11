@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 def imagesave(instance,filename):
     imagename , extension = filename.split(".")
-    return "users/%s/%s/"%(instance.id,"images", extension)
+    return "users/%s/%s.%s"%("images", instance.user.username, extension)
 
 
 
@@ -66,22 +66,40 @@ class accountManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    
-    fname         = models.CharField(max_length=20,verbose_name="الاسم الاول",unique=False)
-    lname         = models.CharField(max_length=20,verbose_name="الاسم الاخير",unique=False)
-    phone         = models.CharField(max_length=12, verbose_name="رقم الهاتف",unique=True)
+    choices=[
+        ('doctor', 'doctor'),
+        ('normal', 'normal'),
+    ]
+    fname         = models.CharField(max_length=50,unique=False)
+    lname         = models.CharField(max_length=50,unique=False)
+    phone         = models.CharField(max_length=12, unique=True)
     email         = models.EmailField(unique = True, max_length=254)
     username      = models.SlugField(blank=True,null=True)
     password      = models.CharField(max_length=150)
-    
     # image         = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None)
     
-    joined_at     = models.DateField(auto_now_add=True,verbose_name="تاريخ الانضمام")
-    is_active     = models.BooleanField(default=True)
+    joined_at     = models.DateField(auto_now_add=True)
+    is_online     = models.BooleanField(default=True)
     
+    is_active     = models.BooleanField(default=True)
+    is_doctor     = models.BooleanField(default=False)
     is_admin      = models.BooleanField(default=False)
     is_staff      = models.BooleanField(default=False)
     is_superuser  = models.BooleanField(default=False)
+
+    def DocData(self):
+        if self.is_doctor:
+            doc = Doctor.objects.get(user=self)
+            data = {}
+            data['image'] = doc.image
+            data['coverletter'] = doc.coverletter
+            data['bio']=doc.bio 
+            data['skills']=doc.skills 
+            data['specialization']=doc.specialization
+
+            print(doc)
+            return data
+        return None
 
     USERNAME_FIELD  = 'email'
     REQUIRED_FIELDS = ['fname','lname','phone']
@@ -90,10 +108,13 @@ class User(AbstractBaseUser):
 
 
 
-    def save(self,*args, **kwargs):
-        self.username = slugify(self.fname+"-"+self.lname)
-        self.username = cap(self.username)
-        super(User,self).save(*args,**kwargs)
+    def save(self, *args, **kwargs):
+        # Save the provided password in hashed format
+        self.username = cap(slugify(self.fname+"-"+self.lname))
+        user = super(User, self)
+        user.set_password(self.password)
+        super().save(*args, **kwargs)
+        return user
 
 
     
@@ -154,12 +175,11 @@ class Specialization(models.Model):
 
 class Doctor(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
-    image           = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None, verbose_name="صورة شخصية")
+    image           = models.ImageField(default="users/logo.webp",upload_to=imagesave, null=True, height_field=None, width_field=None, verbose_name="صورة شخصية")
     coverletter     = models.TextField(null=True, verbose_name="تفاصيل")
     bio             = models.CharField(max_length=255, verbose_name="عنوان سيرة ذاتية", blank=True)
     skills          = models.ManyToManyField(Skill, verbose_name="المهارات")
     specialization  = models.OneToOneField(Specialization, on_delete=models.CASCADE, verbose_name="التخصص")
-
     def __str__(self):
         return "دكتور " + self.user.username
 
