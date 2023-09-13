@@ -18,11 +18,16 @@
 
 
 #### Registeration & Login
-- register as doctor or as patient  
-- make it with forms.py as a practice 
-- make error message for each field 
-- add custom validation for password in registeration
+- register as doctor or as patient  -> done
+- make it with forms.py as a practice -> done
+- make error message for each field -> done
+- add custom validation for password in registeration -> done
+
+
 - make user login with email or username or phonenumber
+
+----------------------------------------------------------------
+- add view for upgrade accounts from patient to doctor 
 
 ### Models
 

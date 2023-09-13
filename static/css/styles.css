@@ -10,3 +10,14 @@
 .brand-bg {
     background-color: rgb(238, 62, 56);
 }
+.child-arrow{
+    transition: all .3s ease-in-out;
+}
+.child-arrow:hover i{
+    margin-left: 10px;
+    transition: all .3s ease-in-out;
+}
+.outline-none{
+    outline: none !important;
+    border: none !important;
+}

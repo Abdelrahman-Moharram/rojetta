@@ -2,14 +2,15 @@
 
 
 {% block title %}
-    sign up
+    request.user.username
 {% endblock title %}
     
 
 {% block body %}
 
 
-<div class="container w-25 my-5">
+
+<div class="container w-50 my-5">
   <form method="post">
     {% csrf_token %}
     <!-- Email input -->
@@ -72,8 +73,9 @@
          {% endfor %}
           </div>
         <!-- Checkbox -->
+        
         <div class="form-check d-flex justify-content-center my-4">
-          <input class="form-check-input me-2" type="checkbox" name="is_doctor" id="form2Example33" />
+          <input class="form-check-input me-2" value="{{form.is_doctor.value |default_if_none:'' }}" type="checkbox" name="is_doctor" id="form2Example33" />
           <label class="form-check-label" for="form2Example33">
             sign up as a doctor
           </label>
@@ -101,7 +103,6 @@
             <i class="fab fa-github"></i>
           </a>
         </div>
-      </form>
   </form>
 </div>
 {% endblock body %}

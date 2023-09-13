@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from .models import User
+from .models import Doctor, Faculty, Skill, SkillType, Specialization, User
 from .forms import add_user_form
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -18,7 +18,6 @@ def register(request):
         #     messages.error(request,"Password doesn't match Retype Password")
         #     return redirect("Auth:register")
         form = add_user_form(request.POST)
-        print("\n\n\n\n\n-->",request.POST,"\n\n\n\n\n")
         if form.is_valid():
             f = form.save(commit=False)
             if "is_doctor" in request.POST:
@@ -40,7 +39,7 @@ def register(request):
             
                 # logged in successfully after regestration
                 messages.info(request,user.username+" added succesfully")
-                return redirect("home:profile", username=user.username) 
+                return redirect("home:profile", uuid=user.uuid) 
             
             # logged in Failed after regestration
             messages.error(request,"Login Failed after registeration contact admin")
@@ -73,8 +72,13 @@ def user_login(request):
             request.session.user = user
 
             # logged in successfully
-            messages.info(request," welcome back "+request.user.username)
-            return redirect("home:profile", username=request.user.username) # تمام القوة انهارده
+            doc = Doctor.objects.filter(user=request.user)
+            if len(doc) > 0:
+                doc = doc[0]
+                if doc.bio == None or doc.coverletter == None or doc.skills == None or doc.specialization == None :
+                    messages.info(request, "<a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
+            # messages.info(request," welcome back "+request.user.username)
+            return redirect("home:index")
         
         # no user 
         messages.error(request,"Login failed with Email or Password")
@@ -85,14 +89,53 @@ def user_login(request):
 
 
 # @login_required
-def profile(request,username):
-    return render(request,"Auth/profile.html",{"user":User.objects.get(username=username)})
+def profile(request,uuid):
+        return render(request,"Auth/profile.html",{"user":User.objects.get(uuid=uuid)})
 
 
 @login_required
 def logout_user(request):
         logout(request)
         return redirect("home:index")
+
+
+# 
+@login_required
+def addDocData(request):
+    try:
+        doc = Doctor.objects.get(user=request.user)
+    except:
+        messages.error(request,doc.user.username+"<a class='child-arrow' href='/auth/add-doc/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
+        return redirect("home:index")
+    
+    if  request.method == "POST":
+        doc.bio = request.POST['bio']
+        doc.coverletter = request.POST['coverletter']
+        length = len(request.POST.getlist('skill'))
+        files = request.FILES
+        for index in range(length):
+            skillType = SkillType.objects.create(name=request.post.getlist("skill_type")[index])
+            skillType.save()
+            skill = Skill.objects.create(name=request.post.getlist("skill")[index], type=skillType, date=request.post.getlist("skill_date")[index], certificate=files[index])
+            skill.save()
+        
+        specialization = Specialization.objects.create(
+            name=request.POST['specialization'],
+            faculty=request.POST['faculty'],
+            university=request.POST['university'],
+            )
+        specialization.save()
+
+        # doc.specialization = request.POST['specialization']
+        # doc.save()
+        messages.info(request,doc.user.username+" updated succesfully")
+        return redirect("Auth:docform")
+    return render(request,"Auth/docform.html",{"doc":doc, "faculties":Faculty.objects.all()})
+
+
+
+
+
 
 
 

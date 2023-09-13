@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User,BaseUserManager,AbstractBaseUser
 from django.utils.text import slugify
-
+import uuid
 
 
 def imagesave(instance,filename):
@@ -21,7 +21,7 @@ def cap(string):
 
 
 class accountManager(BaseUserManager):
-    def create_user(self,email,fname,lname,phone,password = None):
+    def create_user(self,email,fname,lname,phone,password, **kwargs):
         if not email:
             raise ValueError('user must have an email')
 
@@ -46,13 +46,14 @@ class accountManager(BaseUserManager):
         return user
     
 
-    def create_superuser(self,email,fname,lname,phone,password):
+    def create_superuser(self,email,fname,lname,phone,password, **kwargs):
         user = self.create_user(
-            email = self.normalize_email(email),
+            email = email,
             phone = phone,
             fname = fname,
             lname = lname,
             password=password,
+            **kwargs
         )
         user.is_admin = True
         user.is_staff = True
@@ -66,10 +67,7 @@ class accountManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    choices=[
-        ('doctor', 'doctor'),
-        ('normal', 'normal'),
-    ]
+    uuid          = models.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
     fname         = models.CharField(max_length=50,unique=False)
     lname         = models.CharField(max_length=50,unique=False)
     phone         = models.CharField(max_length=12, unique=True)
@@ -79,7 +77,6 @@ class User(AbstractBaseUser):
     # image         = models.ImageField(default="users/logo.png",upload_to=imagesave, null=True, height_field=None, width_field=None)
     
     joined_at     = models.DateField(auto_now_add=True)
-    is_online     = models.BooleanField(default=True)
     
     is_active     = models.BooleanField(default=True)
     is_doctor     = models.BooleanField(default=False)
@@ -139,8 +136,7 @@ class SkillType(models.Model):
 class Skill(models.Model):
     name        = models.CharField(max_length=100)
     type        = models.ForeignKey(SkillType, on_delete=models.PROTECT)
-    from_date   = models.DateTimeField(auto_now_add=False, null=True)
-    to_date     = models.DateTimeField(auto_now_add=False, null=True)
+    date        = models.DateField(auto_now_add=False, null=True)
     certificate = models.FileField(upload_to="media/doctors/", max_length=100)
     def __str__(self):
         return self.name
@@ -159,17 +155,18 @@ class University(models.Model):
         return self.name
 class Faculty(models.Model):
     name = models.CharField(max_length=100)
+    university = models.ForeignKey(University, on_delete=models.PROTECT)
     def __str__(self):
-        return self.name
+        return self.name + " " + self.university.name
 
 
 class Specialization(models.Model):
-    name = models.CharField(max_length=100, verbose_name="التخصص")
-    faculty = models.ForeignKey(Faculty, on_delete=models.PROTECT, verbose_name="الكلية")
-    university = models.ForeignKey(University, on_delete=models.PROTECT, verbose_name="الجامعة")
-
+    name        = models.CharField(max_length=100, verbose_name="التخصص")
+    faculty     = models.CharField(max_length=100)
+    university  = models.CharField(max_length=100)
+    
     def __str__(self):
-        return self.name
+        return self.name + " " + str(self.faculty)
 
 
 
@@ -177,11 +174,23 @@ class Doctor(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
     image           = models.ImageField(default="users/logo.webp",upload_to=imagesave, null=True, height_field=None, width_field=None, verbose_name="صورة شخصية")
     coverletter     = models.TextField(null=True, verbose_name="تفاصيل")
-    bio             = models.CharField(max_length=255, verbose_name="عنوان سيرة ذاتية", blank=True)
+    bio             = models.CharField(max_length=255, verbose_name="عنوان سيرة ذاتية", null=True)
     skills          = models.ManyToManyField(Skill, verbose_name="المهارات")
-    specialization  = models.OneToOneField(Specialization, on_delete=models.CASCADE, verbose_name="التخصص")
+    specialization  = models.ForeignKey(Specialization, null=True, on_delete=models.CASCADE, verbose_name="التخصص")
+    is_completed    = models.IntegerField(default=0)
+
     def __str__(self):
-        return "دكتور " + self.user.username
+        return "Dr." + self.user.username
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+@receiver(post_save, sender=User)
+def create_doctor(sender, instance, **kwargs):
+    if kwargs['created']:
+        doc = Doctor.objects.create(user=instance)
+        doc.save()
+
+        
 
 
 class Clinic(models.Model):
@@ -190,8 +199,8 @@ class Clinic(models.Model):
     state           = models.ForeignKey(State, on_delete=models.PROTECT, verbose_name="المنطقة")
     detailLocation  = models.CharField(max_length=555, verbose_name="العنوان المفصل")
     mapsLocation    = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان علي خرائط جوجل")
-    price           = models.FloatField(verbose_name="سعر الكشف")
-    is_opned        = models.BooleanField(verbose_name="العيادة مفتوحة", default=False)
+    price           = models.FloatField()
+    is_opned        = models.BooleanField(default=False)
     last_opened     = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.doctor)

@@ -7,6 +7,15 @@
 
 
 {% block body %}
+
+
+  {% if not user.docData.is_completed %}
+  <div class="alert alert-primary" role="alert">
+    <a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
+  </div>
+  {% endif %}
+  
+
 <section style="background-color: #eee;">
     <div class="container py-5">
       
@@ -15,14 +24,14 @@
         <div class="col-lg-4">
           <div class="card mb-4">
             <div class="card-body text-center">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              <img src="{{user.DocData.image.url}}" alt="avatar"
                 class="rounded-circle img-fluid" style="width: 150px;">
               <h5 class="my-3">{{user.username}}</h5>
-            -->{{user.DocData}}
-              <p class="text-muted mb-1">Full Stack Developer</p>
-              <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+          
+              <p class="text-muted mb-1">{{user.DocData.bio |default_if_none:''}}</p>
+              <p class="text-muted mb-4">{{user.DocData.bio |default_if_none:''}}</p>
               <div class="d-flex justify-content-center mb-2">
-                <button type="button" class="btn btn-primary">Follow</button>
+                <!-- <button type="button" class="btn btn-primary">Follow</button> -->
                 <button type="button" class="btn btn-outline-primary ms-1">Message</button>
               </div>
             </div>
@@ -53,6 +62,7 @@
               </ul>
             </div>
           </div>
+          
         </div>
         <div class="col-lg-8">
           <div class="card mb-4">

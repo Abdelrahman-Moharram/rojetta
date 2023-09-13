@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    request.user.username
+{% endblock title %}
+    
+
+{% block body %}
+
+
+<div class="container-fluid w-100 my-5">
+  <form method="post">
+    {% csrf_token %}
+    <div class="card mb-4 mb-lg-0">
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush rounded-3">
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <div class="col">
+              <div class="form-outline">
+                <input value="{{doc.bio|default_if_none:''}}" name="bio" type="text" id="form3Example1" class="form-control" />
+                <label class="form-label" for="form3Bio">bio</label>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <div class="col">
+              <div class="form-outline">
+                <textarea value="{{doc.coverletter}}" name="coverletter" type="text" rows="10" id="form3Example1" class="form-control" ></textarea>
+                <label class="form-label" for="form3Bio">coverletter</label>
+              </div>
+            </div>
+          </li>
+          
+          
+          <li class="list-group-item justify-content-between align-items-center p-3">
+            <div class="row">
+              
+              <div class="col-12 mb-4">
+                <div class="form-outline">
+                  <input value="{{doc.specialization|default_if_none:''}}" name="specialization" type="text" id="form3Example2" class="form-control" />
+                  <label class="form-label" for="form3Example1">Specialization ex: نسا وتوليد</label>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-outline">
+                  <input value="{{doc.faculty}}" name="faculty" type="text" id="form3Example2" class="form-control" >
+                  <label class="form-label" for="form3Example2">faculty ex: كلية الطب</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-outline">
+                  <input value="{{doc.university}}" name="university" type="text" id="form3Example2" class="form-control" >
+                  <label class="form-label" for="form3Example2">university ex: جامعة القاهرة</label>
+                </div>
+              </div>
+              
+            </div>
+          </li>
+
+
+          <li class="list-group-item justify-content-between align-items-center p-3">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-outline">
+                  <input value="" name="skill_type" type="text" id="form3Example2" class="form-control" />
+
+                  <label class="form-label" for="form3Example1">Skill Type ex: Diploma, Ph.D</label>
+                </div>
+              </div>
+              <div class="col-8 mb-4">
+                <div class="form-outline">
+                  <input value="" name="skill" type="text" id="form3Example2" class="form-control" />
+                  <label class="form-label" for="form3Example2">skill</label>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-outline">
+                  <input value="" name="lname" type="date" id="form3Example2" class="form-control" />
+                  <label class="form-label" for="form3Example2">date</label>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-outline">
+                  <input value="" name="certificate" type="file" id="form3Example2" class="form-control" />
+                  <label class="form-label" for="form3Example2">certificate</label>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">Save</button>
+      
+      
+  </form>
+</div>
+{% endblock body %}
+    

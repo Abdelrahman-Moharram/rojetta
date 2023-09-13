@@ -130,7 +130,7 @@
             aria-labelledby="navbarDropdownMenuAvatar"
           >
             <li>
-              <a class="dropdown-item" href="{% url 'home:profile' request.user.username %}">{{request.user.username}}</a>
+              <a class="dropdown-item" href="{% url 'home:profile' request.user.uuid %}">{{request.user.username}}</a>
             </li>
             <li>
               <a class="dropdown-item" href="#">Settings</a>
@@ -158,8 +158,8 @@
     
     {% for message in messages %}
       <div class="alert alert-primary" role="alert">
-        {{message.message}}
-    </div>
+          {{message.message |safe }}
+      </div>
     {% endfor %}
       
     {% block body %}
