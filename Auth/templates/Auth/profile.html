@@ -9,7 +9,7 @@
 {% block body %}
 
 
-  {% if not user.docData.is_completed %}
+  {% if request.user.is_doctor and  not user.docData.is_completed %}
   <div class="alert alert-primary" role="alert">
     <a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
   </div>
@@ -29,7 +29,7 @@
               <h5 class="my-3">{{user.username}}</h5>
           
               <p class="text-muted mb-1">{{user.DocData.bio |default_if_none:''}}</p>
-              <p class="text-muted mb-4">{{user.DocData.bio |default_if_none:''}}</p>
+              <p class="text-muted mb-4">{{user.DocData.coverletter |default_if_none:''}}</p>
               <div class="d-flex justify-content-center mb-2">
                 <!-- <button type="button" class="btn btn-primary">Follow</button> -->
                 <button type="button" class="btn btn-outline-primary ms-1">Message</button>

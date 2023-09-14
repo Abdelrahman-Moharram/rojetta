@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User,BaseUserManager,AbstractBaseUser
 from django.utils.text import slugify
 import uuid
+from django.utils import timezone
 
 
 def imagesave(instance,filename):
@@ -135,9 +136,9 @@ class SkillType(models.Model):
         return self.name
 class Skill(models.Model):
     name        = models.CharField(max_length=100)
-    type        = models.ForeignKey(SkillType, on_delete=models.PROTECT)
-    date        = models.DateField(auto_now_add=False, null=True)
-    certificate = models.FileField(upload_to="media/doctors/", max_length=100)
+    type        = models.ForeignKey(SkillType, null=True, blank=True, on_delete=models.PROTECT)
+    date        = models.DateField(default=timezone.now)
+    certificate = models.FileField(upload_to="media/doctors/", max_length=100, null=True, blank=True)
     def __str__(self):
         return self.name
 class Government(models.Model):
@@ -162,8 +163,8 @@ class Faculty(models.Model):
 
 class Specialization(models.Model):
     name        = models.CharField(max_length=100, verbose_name="التخصص")
-    faculty     = models.CharField(max_length=100)
-    university  = models.CharField(max_length=100)
+    faculty     = models.CharField(max_length=100, null=True)
+    university  = models.CharField(max_length=100, null=True)
     
     def __str__(self):
         return self.name + " " + str(self.faculty)

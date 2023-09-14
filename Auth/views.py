@@ -72,9 +72,8 @@ def user_login(request):
             request.session.user = user
 
             # logged in successfully
-            doc = Doctor.objects.filter(user=request.user)
-            if len(doc) > 0:
-                doc = doc[0]
+            if request.user.is_doctor:
+                doc = Doctor.objects.get(user=request.user)
                 if doc.bio == None or doc.coverletter == None or doc.skills == None or doc.specialization == None :
                     messages.info(request, "<a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
             # messages.info(request," welcome back "+request.user.username)
@@ -109,27 +108,62 @@ def addDocData(request):
         return redirect("home:index")
     
     if  request.method == "POST":
-        doc.bio = request.POST['bio']
-        doc.coverletter = request.POST['coverletter']
-        length = len(request.POST.getlist('skill'))
-        files = request.FILES
-        for index in range(length):
-            skillType = SkillType.objects.create(name=request.post.getlist("skill_type")[index])
-            skillType.save()
-            skill = Skill.objects.create(name=request.post.getlist("skill")[index], type=skillType, date=request.post.getlist("skill_date")[index], certificate=files[index])
-            skill.save()
-        
-        specialization = Specialization.objects.create(
-            name=request.POST['specialization'],
-            faculty=request.POST['faculty'],
-            university=request.POST['university'],
-            )
-        specialization.save()
+        if "bio" in request.POST:
+            doc.bio = request.POST['bio']
+        if "coverletter" in request.POST:
+            doc.coverletter = request.POST['coverletter']
+        if 'skill' in request.POST:
+            length = len(request.POST.getlist('skill'))
+            skills_length = len(doc.skills.all()) 
+            for index in range(length):
+                if index <= skills_length-1:
+                
+                    skill = Skill.objects.get(id=doc.skills.all()[index].id)
+                    skill_type = SkillType.objects.get(id=skill.type.id)
+                    skill_type.name = request.POST.getlist("skill_type")[index]
+                    skill_type.save()
+                    skill.name = request.POST.getlist("skill")[index]
+                    skill.date = request.POST.getlist("skill_date")[index]
+                    if "certificate" in  request.FILES:
+                        skill.certificate = request.FILES['certificate']
+                    skill.save()
+                
+                else:
+                    if request.POST.getlist("skill_type")[index] and request.POST.getlist("skill")[index]:
 
-        # doc.specialization = request.POST['specialization']
-        # doc.save()
+                        skillType = SkillType.objects.create(name=request.POST.getlist("skill_type")[index])
+                        skillType.save()
+                        currSkill = request.POST.getlist("skill")[index]
+                        skill_date = request.POST.getlist("skill_date")[index]
+                        print("\n\n\n\n>>>",currSkill, type(currSkill), skillType, type(skillType))
+                        print(skill_date)
+                        skill = Skill.objects.create(name=currSkill, type=skillType)
+                        if skill_date:
+                            skill.date = skill_date
+                        if "certificate" in  request.FILES:
+                            skill.certificate= request.FILES['certificate']
+                        skill.save()
+                        doc.skills.add(skill)
+                # doc.save()
+        if'specialization' in request.POST:
+            if doc.specialization:
+                specialization = Specialization.objects.get(id=doc.specialization.id)
+                specialization.name= request.POST['specialization']
+                specialization.faculty= request.POST['faculty']
+                specialization.university= request.POST['university']
+                specialization.save()
+            else:
+                specialization = Specialization.objects.create(
+                    name=request.POST['specialization'],
+                    faculty=request.POST['faculty'],
+                    university=request.POST['university'],
+                    )
+                specialization.save()
+                doc.specialization = specialization
+        doc.save()
+
         messages.info(request,doc.user.username+" updated succesfully")
-        return redirect("Auth:docform")
+        return redirect("Auth:adddoc")
     return render(request,"Auth/docform.html",{"doc":doc, "faculties":Faculty.objects.all()})
 
 
