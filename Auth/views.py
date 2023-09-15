@@ -131,12 +131,9 @@ def addDocData(request):
                 else:
                     if request.POST.getlist("skill_type")[index] and request.POST.getlist("skill")[index]:
 
-                        skillType = SkillType.objects.create(name=request.POST.getlist("skill_type")[index])
-                        skillType.save()
+                        skillType = SkillType.objects.get(name=request.POST.getlist("skill_type")[index])
                         currSkill = request.POST.getlist("skill")[index]
                         skill_date = request.POST.getlist("skill_date")[index]
-                        print("\n\n\n\n>>>",currSkill, type(currSkill), skillType, type(skillType))
-                        print(skill_date)
                         skill = Skill.objects.create(name=currSkill, type=skillType)
                         if skill_date:
                             skill.date = skill_date
@@ -145,26 +142,15 @@ def addDocData(request):
                         skill.save()
                         doc.skills.add(skill)
                 # doc.save()
+        print(request.POST)
         if'specialization' in request.POST:
-            if doc.specialization:
-                specialization = Specialization.objects.get(id=doc.specialization.id)
-                specialization.name= request.POST['specialization']
-                specialization.faculty= request.POST['faculty']
-                specialization.university= request.POST['university']
-                specialization.save()
-            else:
-                specialization = Specialization.objects.create(
-                    name=request.POST['specialization'],
-                    faculty=request.POST['faculty'],
-                    university=request.POST['university'],
-                    )
-                specialization.save()
-                doc.specialization = specialization
+            specialization = Specialization.objects.get(name=request.POST['specialization'])
+            doc.specialization = specialization
         doc.save()
 
         messages.info(request,doc.user.username+" updated succesfully")
         return redirect("Auth:adddoc")
-    return render(request,"Auth/docform.html",{"doc":doc, "faculties":Faculty.objects.all()})
+    return render(request,"Auth/docform.html",{"doc":doc, "SkillTypes":SkillType.objects.all(), "specializations":Specialization.objects.all(), })
 
 
 

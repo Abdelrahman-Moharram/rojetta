@@ -3,7 +3,8 @@ from django.contrib.auth.models import User,BaseUserManager,AbstractBaseUser
 from django.utils.text import slugify
 import uuid
 from django.utils import timezone
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 def imagesave(instance,filename):
     imagename , extension = filename.split(".")
@@ -131,43 +132,58 @@ class User(AbstractBaseUser):
 
 
 class SkillType(models.Model):
-    name = models.CharField(max_length=100)
+    name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="نوع المهارات", null=True, blank=True)
+
     def __str__(self):
         return self.name
+
+
+
 class Skill(models.Model):
     name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="المهارات", null=True, blank=True)
     type        = models.ForeignKey(SkillType, null=True, blank=True, on_delete=models.PROTECT)
     date        = models.DateField(default=timezone.now)
     certificate = models.FileField(upload_to="media/doctors/", max_length=100, null=True, blank=True)
     def __str__(self):
         return self.name
+
+
 class Government(models.Model):
     name = models.CharField(max_length=100,verbose_name="المحافظة")
     def __str__(self):
         return self.name
 class State(models.Model):
-    name = models.CharField(max_length=100, verbose_name="المنطقة")
+    name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="المنطقة", null=True, blank=True)
     def __str__(self):
         return self.name
 
 class University(models.Model):
-    name = models.CharField(max_length=100)
+    name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="الجامعة", null=True, blank=True)
+
     def __str__(self):
         return self.name
 class Faculty(models.Model):
-    name = models.CharField(max_length=100)
+    name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="الكلية", null=True, blank=True)
+
     university = models.ForeignKey(University, on_delete=models.PROTECT)
     def __str__(self):
-        return self.name + " " + self.university.name
+        return self.name 
 
 
 class Specialization(models.Model):
-    name        = models.CharField(max_length=100, verbose_name="التخصص")
-    faculty     = models.CharField(max_length=100, null=True)
-    university  = models.CharField(max_length=100, null=True)
+    name        = models.CharField(max_length=100)
+    ar_name     = models.CharField(max_length=100, verbose_name="التخصص", null=True, blank=True)
+    icon        = models.ImageField(default="specilizations/stethoscope-alt.png")
+    # faculty     = models.CharField(max_length=100, null=True)
+    # university  = models.CharField(max_length=100, null=True)
     
     def __str__(self):
-        return self.name + " " + str(self.faculty)
+        return self.name
 
 
 
@@ -183,8 +199,7 @@ class Doctor(models.Model):
     def __str__(self):
         return "Dr." + self.user.username
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 @receiver(post_save, sender=User)
 def create_doctor(sender, instance, **kwargs):
     if kwargs['created']:
