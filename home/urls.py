@@ -7,6 +7,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="index"),
     path("<str:uuid>/", profile, name="profile"),
-    path("error404/", views.error404, name="error404"),
-
 ]
