@@ -22,13 +22,13 @@ function addSkill(){
                     aria-labelledby="SkillTypesMenuAvatar"
                   >
                   
-                  {% for type in SkillTypes %}  
+                  '{% for type in SkillTypes %}'
                     <li>
                       <div onclick="changeValId('{{type.name}}', 'form3skill_type')" class="dropdown-item">
-                        <span class="mx-3">{{type.name}}</span>
+                        <span class="mx-3">'{{type.name}}'</span>
                       </div>
                     </li>
-                  {% endfor %}
+                  '{% endfor %}'
                   </ul>
                 </div>
                 </div>
@@ -101,11 +101,10 @@ function addSkill(){
     var skillsLi = null;
     skillsLi = document.getElementById('PhoneItem');
     skillsLi.innerHTML += `
-    <div class="col">
-        <div class="form-outline">
-            <input value="{{clinic.phone|default_if_none:''}}" name="phone" type="text" id="form3phone" class="form-control" />
+    <br>
+    <div class="col form-outline">
+            <input name="phone" type="text" id="form3phone" class="form-control" />
             <label class="form-label" for="form3Bio">phone</label>
-        </div>
     </div>
     `;
   }

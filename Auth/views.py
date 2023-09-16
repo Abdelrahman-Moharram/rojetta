@@ -165,8 +165,9 @@ def addDocData(request):
                 specialization = Specialization.objects.create(name=request.POST['specialization'])
 
             doc.specialization = specialization
+        if doc.skills.count() > 0 and doc.specialization!="" and doc.image.url!="/media/users/logo.webp" and doc.coverletter!="" and doc.bio!="":
+            doc.is_completed = True
         doc.save()
-
         messages.info(request,doc.user.username+" updated succesfully")
         return redirect("Auth:addClinic")
     return render(request,"Auth/docform.html",{"doc":doc, "SkillTypes":SkillType.objects.all(), "specializations":Specialization.objects.all(), })
@@ -198,12 +199,13 @@ def addClinic(request):
             try:
                 state = State.objects.get(name=request.POST['state'])
             except:
-                state = State.objects.create(name=request.POST['state'])
+                state = State.objects.create(name=request.POST['state'], government=government)
             clinic.state = state
         if 'detailLocation' in request.POST:
             clinic.detailLocation = request.POST['detailLocation']
         if 'mapsLocation' in request.POST:
             clinic.mapsLocation = request.POST['mapsLocation']
+        clinic.save()
     
     return render(request, 'auth/clinicform.html', {"clinic":clinic, 'governments':Government.objects.all()})
 

@@ -107,14 +107,14 @@ class User(AbstractBaseUser):
             data['bio']=doc.bio 
             data['skills']=doc.skills 
             data['specialization']=doc.specialization
+            data['is_completed']=doc.is_completed
 
             return data
         return None
 
-    def cleanData(self):
+    def ClinicData(self):
         if self.is_doctor :
-            clinic = Clinic.objects.get(doctor_user=self)
-            print('Clinic==> ', clinic)
+            clinic = Clinic.objects.get(doctor=Doctor.objects.get(user=self))
             data = {}
             data['government'] = clinic.government
             data['state'] = clinic.state
@@ -214,8 +214,8 @@ class Doctor(models.Model):
     bio             = models.CharField(max_length=255, verbose_name="عنوان سيرة ذاتية", null=True)
     skills          = models.ManyToManyField(Skill, verbose_name="المهارات")
     specialization  = models.ForeignKey(Specialization, null=True, on_delete=models.CASCADE, verbose_name="التخصص")
-    is_completed    = models.IntegerField(default=0)
-    phone           = models.ManyToManyField('Phone', blank=True)
+    is_completed    = models.BooleanField(default=False)
+    # phone           = models.ManyToManyField('Phone', blank=True)
 
     def __str__(self):
         return "Dr." + self.user.username
