@@ -12,14 +12,6 @@ class add_user_form(forms.ModelForm):
         exclude = ("is_active", "is_staff","is_superuser","last_login", "is_admin", "is_doctor")
         
 
-
-    def clean_phone(self, *args, **kwargs):
-        phone = self.cleaned_data.get('phone')
-        if User.objects.filter(phone=phone).exists():
-            raise forms.ValidationError("Phone number already exists")
-        if not phone.startswith("01") :
-            raise forms.ValidationError("Phone number is not a valid")
-        return phone
     
     def clean_email(self, *args, **kwargs):
         email = self.cleaned_data.get('email')

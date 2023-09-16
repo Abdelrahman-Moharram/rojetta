@@ -8,8 +8,6 @@
 
 {% block body %}
 
-
-
 <div class="container w-50 my-5">
   <form method="post">
     {% csrf_token %}
@@ -45,13 +43,13 @@
             {% endfor %}
         </div>
 
-        <div class="form-outline my-4">
+        <!-- <div class="form-outline my-4">
             <input value="{{form.phone.value |default_if_none:'' }}" type="text" name="phone" id="form3Phone" class="form-control {% if form.errors.phone %}is-invalid{% endif %}" />
             <label class="form-label"  for="form3Phone">Phone Number</label>
             {% for err in form.errors.phone %}
                <div class="invalid-feedback">{{err}}</div>
               {% endfor %}
-          </div>
+          </div> -->
       
         <!-- Password input -->
         <div class="form-outline my-4">

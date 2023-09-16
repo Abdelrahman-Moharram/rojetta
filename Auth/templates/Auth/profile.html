@@ -9,12 +9,17 @@
 {% block body %}
 
 
-  {% if request.user.is_doctor and  not user.docData.is_completed %}
+  {% if request.user.is_doctor and  user.docData.is_completed %}
   <div class="alert alert-primary" role="alert">
     <a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
   </div>
   {% endif %}
-  
+
+  {% if request.user.is_doctor and not user.clinic.government %}
+  <div class="alert alert-primary" role="alert">
+    <a class='child-arrow' href='{% url "Auth:addClinic" %}'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
+  </div>
+  {% endif %}
 
 <section style="background-color: #eee;">
     <div class="container py-5">
@@ -24,8 +29,12 @@
         <div class="col-lg-4">
           <div class="card mb-4">
             <div class="card-body text-center">
-              <img src="{{user.DocData.image.url}}" alt="avatar"
+              
+              {% if user.image %}
+                <img src="{{user.DocData.image.url}}" alt="avatar"
                 class="rounded-circle img-fluid" style="width: 150px;">
+              {% endif %}
+                
               <h5 class="my-3">{{user.username}}</h5>
           
               <p class="text-muted mb-1">{{user.DocData.bio |default_if_none:''}}</p>

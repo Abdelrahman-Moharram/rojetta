@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    {{request.user.username}}
+{% endblock title %}
+    
+
+{% block body %}
+
+<div class="container-fluid w-100 my-5">
+  <form method="post">
+    {% csrf_token %}
+    <div class="card mb-4 mb-lg-0">
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush rounded-3">
+          <h2 class="m-4">Clinic Address</h2>
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <!-------------------------------------------------------->
+            <div class="col-4">
+              
+              <div class="dropdown mb-4">
+                <div
+                  class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                  id="governmentMenuAvatar"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <div class="form-outline">
+                  <input value="{{clinic.government|default_if_none:''}}" name="government"  type="text" id="form3government" class="form-control" />
+                  <label class="form-label" for="form3Bio">government</label>
+                </div>
+                </div>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="governmentMenuAvatar"
+                >
+                
+                {% for government in governments %}  
+                  <li>
+                    <div onclick="changeValId('{{government.name}}', 'form3government', true)" class="dropdown-item">
+                      <span class="mx-3">{{government.name}}</span>
+                    </div>
+                  </li>
+                {% endfor %}
+                </ul>
+              </div>
+
+              
+            </div>
+            <!-------------------------------------------------------->
+            <!------------------- for state ---------------------------->
+            <div class="col-8">
+              <div class="dropdown mb-4">
+                <div
+                  class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                  id="stateMenuAvatar"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <div class="form-outline">
+                  <input value="{{clinic.state|default_if_none:''}}" name="state"  type="text" id="form3state" class="form-control" />
+                  <label class="form-label" for="form3Bio">state</label>
+                </div>
+                </div>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="stateMenuAvatar"
+                  id="statesListAvatar"
+                >
+                
+                
+                </ul>
+              </div>
+            </div>
+            <!-------------------------------------------------------->
+
+
+          </li>
+          
+
+          
+          
+          
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <div class="col">
+              <div class="form-outline">
+                <input value="{{clinic.detailLocation|default_if_none:''}}" name="detailLocation" type="text" id="form3detailLocation" class="form-control" />
+                <label class="form-label" for="form3Bio">Detail Location</label>
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <div class="col">
+              <div class="form-outline">
+                <input value="{{clinic.mapsLocation|default_if_none:''}}" name="mapsLocation" type="text" id="form3mapsLocation" class="form-control" />
+                <label class="form-label" for="form3Bio">Maps Location</label>
+              </div>
+            </div>
+          </li>
+          
+
+          <li class="list-group-item d-flex justify-content-between align-items-center p-3" id="PhoneItem">
+            
+            <div class="col">
+              <div class="form-outline">
+                <input value="{{clinic.phone|default_if_none:''}}" name="phone" type="text" id="form3phone" class="form-control" />
+                <label class="form-label" for="form3Bio">phone</label>
+              </div>
+            </div>
+
+            <div class="d-block">
+              <button type="button" onclick="addPhone()" class="btn btn-success" style="float: right;">Add a new Phone</button>
+            </div>
+          </li>
+
+          
+          
+          
+          
+        </ul>
+      </div>
+    </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">Save</button>
+      
+      
+  </form>
+</div>
+
+<script>
+
+function getStates(id){
+  console.log("here",id);
+    flag = false
+    var gover = document.getElementById('form3government').value
+    $.ajax({
+      url:'getStates/'+gover+"/",
+      type:'GET',
+      success: function(data){
+        let statesList = document.getElementById("statesListAvatar")
+        // statesList.innerHTML = `
+        // <li>
+        //     <div onclick="changeValId('{{state.name}}', 'form3government')" class="dropdown-item">
+        //         <span class="mx-3">{{government.name}}</span>
+        //     </div>
+        // </li>
+        //           `;
+        data.states.forEach(state => {
+          statesList.innerHTML+=`
+            <li>
+                <div onclick="changeValId(${state.name}, 'form3state')" class="dropdown-item">
+                    <span class="mx-3">${state.name}</span>
+                </div>
+            </li>
+                  `
+        });
+      },
+      error: function(errs){
+        console.error("errors=>", errs);
+      }
+    })
+  }
+</script>
+{% endblock body %}
+    

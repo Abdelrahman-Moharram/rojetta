@@ -1,9 +1,10 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, HttpResponse
 from django.contrib import messages
-from .models import Doctor, Faculty, Skill, SkillType, Specialization, User
+from .models import Clinic, Doctor, Faculty, Government, Skill, SkillType, Specialization, State, User
 from .forms import add_user_form
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 
 
@@ -33,7 +34,6 @@ def register(request):
                 ## save date in session should be string not date -> we made [tagned_date, end_date] in str form
                 user._mutable = True
                 user.joined_at = str(user.joined_at)
-
                 # save user in sessions
                 request.session.user = user
             
@@ -98,13 +98,27 @@ def logout_user(request):
         return redirect("home:index")
 
 
+
+@login_required
+def upgradeAccount(request):
+    user = User.objects.get(uuid=request.user.uuid)
+    user.is_doctor=True
+    user.save()
+    doc = Doctor.objects.create(user=user)
+    doc.save()
+    Clinic.objects.create(doctor=doc).save()
+    return redirect("Auth:adddoc")
+
 # 
 @login_required
 def addDocData(request):
+    if not request.user.is_doctor:
+        messages.error(request,request.user.username+"<a class='child-arrow' href='/auth/upgrade-account/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
+        return redirect("home:index")
     try:
         doc = Doctor.objects.get(user=request.user)
     except:
-        messages.error(request,doc.user.username+"<a class='child-arrow' href='/auth/add-doc/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
+        messages.error(request,request.user.username+"<a class='child-arrow' href='/auth/add-doc/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
         return redirect("home:index")
     
     if  request.method == "POST":
@@ -130,8 +144,10 @@ def addDocData(request):
                 
                 else:
                     if request.POST.getlist("skill_type")[index] and request.POST.getlist("skill")[index]:
-
-                        skillType = SkillType.objects.get(name=request.POST.getlist("skill_type")[index])
+                        try:
+                            skillType = SkillType.objects.get(name=request.POST.getlist("skill_type")[index])
+                        except:
+                            skillType = SkillType.objects.create(name=request.POST.getlist("skill_type")[index])
                         currSkill = request.POST.getlist("skill")[index]
                         skill_date = request.POST.getlist("skill_date")[index]
                         skill = Skill.objects.create(name=currSkill, type=skillType)
@@ -142,18 +158,54 @@ def addDocData(request):
                         skill.save()
                         doc.skills.add(skill)
                 # doc.save()
-        print(request.POST)
         if'specialization' in request.POST:
-            specialization = Specialization.objects.get(name=request.POST['specialization'])
+            try:
+                specialization = Specialization.objects.get(name=request.POST['specialization'])
+            except:
+                specialization = Specialization.objects.create(name=request.POST['specialization'])
+
             doc.specialization = specialization
         doc.save()
 
         messages.info(request,doc.user.username+" updated succesfully")
-        return redirect("Auth:adddoc")
+        return redirect("Auth:addClinic")
     return render(request,"Auth/docform.html",{"doc":doc, "SkillTypes":SkillType.objects.all(), "specializations":Specialization.objects.all(), })
 
 
+def getStates(request, name):
+    return JsonResponse({
+            "states":list(State.objects.filter(government=Government.objects.get(name=name)).values('id', 'name'))
+        })
 
+
+@login_required
+def addClinic(request):
+    try:
+        doc = Doctor.objects.get(user=request.user)
+        clinic = Clinic.objects.get(doctor=doc)
+    except:
+        messages.error(request,doc.user.username+"<a class='child-arrow' href='/auth/add-doc/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
+        return redirect("home:index")
+    
+    if  request.method == "POST":
+        if 'government' in request.POST:
+            try:
+                government = Government.objects.get(name=request.POST['government'])
+            except:
+                government = Government.objects.create(name=request.POST['government'])
+            clinic.government = government
+        if 'state' in request.POST:
+            try:
+                state = State.objects.get(name=request.POST['state'])
+            except:
+                state = State.objects.create(name=request.POST['state'])
+            clinic.state = state
+        if 'detailLocation' in request.POST:
+            clinic.detailLocation = request.POST['detailLocation']
+        if 'mapsLocation' in request.POST:
+            clinic.mapsLocation = request.POST['mapsLocation']
+    
+    return render(request, 'auth/clinicform.html', {"clinic":clinic, 'governments':Government.objects.all()})
 
 
 
