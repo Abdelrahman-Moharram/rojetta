@@ -12,13 +12,13 @@
   {% if request.user.uuid == user.uuid %}
       {% if  user.is_doctor and not user.DocData.is_completed %}
         <div class="alert alert-primary" role="alert">
-          <a class='child-arrow' href='/auth/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
+          <a class='child-arrow' href='/accounts/add-doc/'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
         </div>
       {% endif %}
         
       {% if user.is_doctor and not user.ClinicData.government %}
       <div class="alert alert-primary" role="alert">
-        <a class='child-arrow' href='{% url "Auth:addClinic" %}'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
+        <a class='child-arrow' href='{% url "accounts:addClinic" %}'>There is some data you need to complerte to increase your chance in search appearance ! <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>
       </div>
       {% endif %}
   {% endif %}
@@ -34,10 +34,13 @@
         <div class="col-lg-4">
           <div class="card mb-4">
             <div class="card-body text-center">
-              <!-- {% if user.image %} -->
-              <!-- {% endif %} -->
+              
+              
+              {% if user.DocData.image.url %}
                 <img src="{{user.DocData.image.url}}" alt="avatar"
                 class="rounded-circle img-fluid" style="width: 150px;">
+              {% endif %}
+                
                 
               <h5 class="my-3">{{user.username}}</h5>
           

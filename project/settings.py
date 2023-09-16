@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # Third-party apps
 
     # Applications
-    'Auth',
+    'accounts',
     'home',
 ]
 
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-AUTH_USER_MODEL = "Auth.User"
+AUTH_USER_MODEL = "accounts.User"
 WSGI_APPLICATION = 'project.wsgi.application'
 
 

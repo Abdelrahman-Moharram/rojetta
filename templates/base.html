@@ -140,14 +140,14 @@
               <a class="dropdown-item" href="#">Settings</a>
             </li>
             <li>
-              <a class="dropdown-item" href="{% url 'Auth:logout' %}">Logout</a>
+              <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
             </li>
           </ul>
         </div>
         {% else %}
-        <a class="btn btn-primary" href="{% url 'Auth:login' %}">Login</a>
+        <a class="btn btn-primary" href="{% url 'accounts:login' %}">Login</a>
         <span class="mx-2 text-white">or</span>
-        <a class="btn btn-outline-primary text-white" href="{% url 'Auth:register' %}">Register</a>
+        <a class="btn btn-outline-primary text-white" href="{% url 'accounts:register' %}">Register</a>
         {% endif %}
           
       </div>
