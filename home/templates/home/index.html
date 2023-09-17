@@ -7,11 +7,59 @@
     
 
 {% block body %}
-<div class="ui four column doubling stackable grid container">
-    <div class="column">
-      <p>test paragraph</p>
-      <p>test paragraph II</p>
+ <style>
+  .container-fluid.py-5{
+    background-image: url("/static/imgs/background-2.avif");
+    background-position:center ;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+ </style>
+
+<section style="background-color: #eee;" class=" h-100">
+  <div class="container-fluid py-5 h-100" >
+  
+    <div class="card search-doctor-baner">
+      <div class="card-body text-center">
+        
+        <div class="row g-3">
+          <div class="col-sm-3">
+            <div class="form-outline text-danger">
+              <input type="text" id="form10Example1" class="form-control text-danger " />
+              <label class="form-label text-danger" for="form10Example1"><i class="fas fa-stethoscope mx-2"></i> Specializations</label>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-outline text-danger">
+              <input type="text" id="form10Example1" class="form-control text-danger " />
+              <label class="form-label text-danger" for="form10Example1"><i class="fas fa-user-doctor mx-2"></i>Doctor Name</label>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-outline">
+              <input type="text" id="form10Example2" class="form-control text-success" />
+              <label class="form-label  text-success" for="form10Example2"><i class="fas fa-map-location-dot mx-2"></i>City or Government</label>
+            </div>
+          </div>
+          
+          <div class="col-sm-3">
+            <div class="form-outline">
+              <input type="text" id="form10Example3" class="form-control text-primary" />
+              <label class="form-label text-primary" for="form10Example3"><i class="fas fa-map-pin mx-2"></i> State or Area</label>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary"><i class="fas fa-magnifying-glass mx-4"></i>Search</button>
+          
+        </div>
+
+      </div>
     </div>
-</div>
+  
+  </div>
+</section>
+
+
+
 {% endblock body %}
     

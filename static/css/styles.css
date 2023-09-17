@@ -21,3 +21,11 @@
     outline: none !important;
     border: none !important;
 }
+
+
+.search-doctor-baner{
+max-width: 1000px;
+margin: auto;
+min-height: 100%;
+height: 100%;
+}
