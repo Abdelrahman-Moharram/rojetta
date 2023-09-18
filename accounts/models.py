@@ -217,6 +217,20 @@ class Doctor(models.Model):
     is_completed    = models.BooleanField(default=False)
     # phone           = models.ManyToManyField('Phone', blank=True)
 
+    def ClinicData(self):
+        
+        clinic = Clinic.objects.get(doctor=self)
+        data = {}
+        data['government'] = clinic.government
+        data['state'] = clinic.state
+        data['detailLocation'] = clinic.detailLocation
+        data['mapsLocation'] = clinic.mapsLocation
+        data['price'] = clinic.price
+        data['is_opned'] = clinic.is_opned
+        data['last_opened'] = clinic.last_opened
+        
+        return data
+        
     def __str__(self):
         return "Dr." + self.user.username
 

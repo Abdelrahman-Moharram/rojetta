@@ -8,7 +8,7 @@
 
 {% block body %}
  <style>
-  html, body,  .banner{
+  html, body,  #banner{
     position: relative;
     /* overflow: hidden; */
     background-image: url('https://mdbootstrap.com/img/Photos/Others/images/37.jpg'); 
@@ -16,7 +16,7 @@
     background-size: cover; 
     background-position: center center;
   }
-  .banner .mask {
+  #banner .mask {
     top: 0;
     left: 0;
     right: 0;
@@ -25,13 +25,14 @@
     width: 100%;
     background-attachment: fixed;
   }
-  .banner{
+  #banner{
     height: 100vh;
 
   }
  </style>
-<header>
-  <section  class="banner">
+
+<header  onload="ShowBanners()">
+  <section  id="banner" >
     <div class="mask">
       <div class="container h-100 d-flex justify-content-center align-items-center">
 
@@ -40,9 +41,33 @@
           
           <div class="row g-3">
             <div class="col-sm-3">
-              <div class="form-outline text-danger">
-                <input type="text" id="form10Example1" class="form-control" />
-                <label class="form-label text-danger" for="form10Example1"><i class="fas fa-stethoscope mx-2"></i> Specializations</label>
+              <div class="dropdown mb-4">
+                <div
+                  class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                  id="SkillTypesMenuAvatar"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <div class="form-outline  text-danger">
+                  <input type="text" id="form10Example1" class="form-control  text-danger" />
+                  <label class="form-label text-danger" for="form10Example1"><i class="fas fa-stethoscope mx-2"></i> Specializations</label>
+                </div>
+                </div>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="SkillTypesMenuAvatar"
+                >
+                
+                {% for specialization in specializations %}  
+                  <li>
+                    <div onclick="changeValId('{{specialization.name}}', 'form10Example1')" class="dropdown-item">
+                      <img src="{{specialization.icon.url}}" width="25px" alt="">
+                      <span class="mx-3">{{specialization.name}}</span>
+                    </div>
+                  </li>
+                {% endfor %}
+                </ul>
               </div>
             </div>
             <div class="col-sm-3">
@@ -52,19 +77,62 @@
               </div>
             </div>
             <div class="col-sm-3">
-              <div class="form-outline">
-                <input type="text" id="form10Example2" class="form-control text-primary" />
-                <label class="form-label  text-primary" for="form10Example2"><i class="fas fa-map-location-dot mx-2"></i>City or Government</label>
+              <div class="dropdown mb-4">
+                <div
+                  class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                  id="governmentMenuAvatar"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <div class="form-outline">
+                  <input type="text" id="form3government" class="form-control text-primary" />
+                  <label class="form-label  text-primary" for="form10Example2"><i class="fas fa-map-location-dot mx-2"></i>City or Government</label>
+                </div>
+                </div>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="governmentMenuAvatar"
+                >
+                
+                {% for government in governments %}  
+                  <li>
+                    <div onclick="changeValId('{{government.name}}', 'form3government', true)" class="dropdown-item">
+                      <span class="mx-3">{{government.name}}</span>
+                    </div>
+                  </li>
+                {% endfor %}
+                </ul>
               </div>
             </div>
             
+            
             <div class="col-sm-3">
-              <div class="form-outline">
-                <input type="text" id="form10Example3" class="form-control text-info" />
-                <label class="form-label text-info" for="form10Example3"><i class="fas fa-map-pin mx-2"></i> State or Area</label>
+              <div class="dropdown mb-4">
+                <div
+                  class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                  id="stateMenuAvatar"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <div class="form-outline">
+                  <input type="text" id="form3state" class="form-control text-info" />
+                  <label class="form-label text-info" for="form10Example3"><i class="fas fa-map-pin mx-2"></i> State or Area</label>
+                </div>
+                </div>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="stateMenuAvatar"
+                  id="statesListAvatar"
+                >
+                
+                
+                </ul>
               </div>
             </div>
             <button type="button" class="btn btn-primary"><i class="fas fa-magnifying-glass mx-4"></i>Search</button>
+           
             
           </div>
   
@@ -78,8 +146,38 @@
   </section>
 </header>
 
-<main class="bg-white" style="height: 1000px;">
+<main class="bg-white">
   
+<section style="background-color: #eee;">
+  <div class="container py-5">
+
+    <div class="row mb-5">
+      
+      <div class="col">
+        <div class="list-group list-group-light default-bx-shadow">
+          
+          {% for specialization in specializations %}
+            <a href="{% url 'home:specialization' specialization.id %}" class="{% cycle 'text-primary' 'text-danger' 'text-success' 'text-warning' 'text-info'  %} d-flex justify-content-space-between list-group-item list-group-item-action px-3 border-0 ripple">
+              <div class="">
+                <img src="{{specialization.icon.url}}" width="25px"  alt="">
+                <span class="mx-3 fw-bold">
+                  {{specialization.name}}
+                </span>
+              </div>
+              <div class="fw-bold"><i class="fas fa-angle-right"></i></div>
+            </a>
+          {% endfor %}
+            
+          
+        </div>
+      </div>
+    </div>
+
+        
+      </div>
+    </div>
+  </div>
+</section>
 </main>
 
 

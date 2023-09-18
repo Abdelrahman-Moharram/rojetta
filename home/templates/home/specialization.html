@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    {{specialization.name}}
+{% endblock title %}
+
+
+{% block body %}
+
+
+<section style="background-color: #eee;">
+    <div class="container py-5">
+      <div class="row mb-5">
+        <div class="col">
+
+
+            
+            
+            {% if doctors %}
+                {% for doctor in doctors %}
+                <div class="d-flex position-relative bg-white p-3 rounded justify-content-space-between">
+                    <img
+                    src={{doctor.image.url}}
+                    class="flex-shrink-0 me-3"
+                    style="max-width: 12rem"
+                    alt="hollywood sign"
+                    />
+                    <div>
+                    <h5 class="mt-0 mb-3">{{doctor.user.username}}</h5>
+                    <span class="text-muted my-3">{{doctor.bio}}</span>
+                    <p class="my-3">
+                       {{doctor.coverletter}}
+                    </p>
+                    <a href="{% url 'home:profile' doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <h1 class="text-center "> No doctors added yet</h1>
+            {% endif %}
+                
+                
+
+
+
+        </div>
+      </div>
+    </div>
+</section>
+    
+{% endblock body %}

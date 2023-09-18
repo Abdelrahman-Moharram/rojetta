@@ -70,7 +70,7 @@ function addSkill(){
     var gover = document.getElementById('form3government').value
     console.log(gover);
     $.ajax({
-      url:'/auth/getStates/'+gover+"/",
+      url:'/accounts/getStates/'+gover+"/",
       type:'GET',
       success: function(data){
         let statesList = document.getElementById("statesListAvatar")
@@ -108,3 +108,45 @@ function addSkill(){
     </div>
     `;
   }
+
+  MyBanners=[
+    '/static/imgs/background-1.avif',
+    'https://mdbootstrap.com/img/Photos/Others/images/37.jpg',
+    '/static/imgs/background-2.avif',
+  ]
+  banner=0
+
+
+  function ShowBanners(){ 
+    var bannerImage = document.getElementById('banner')
+    if (document.images){
+      banner++
+      if (banner==MyBanners.length) {
+        banner=0
+      }
+      bannerImage.style.backgroundImage= "url('"+MyBanners[banner]+"')"
+      setTimeout("ShowBanners()",5000)
+  }
+}
+function previousImage() {
+      var bannerImage = document.getElementById('banner')
+        if(count!=0){
+          count--;
+        }
+        else if(banner==0){
+          banner=MyBanners.length
+        }
+        bannerImage.style.backgroundImage= "url('"+MyBanners[banner]+"')";
+        setTimeout("ShowBanners()",5000)
+
+}
+function nextImage() {
+    if(count!=4)
+        count++;
+    else if(banner==MyBanners.length){
+        banner=0
+    }
+    var id = document.getElementById("imageId");
+    id.src = "images/" + images[count];
+  }
+  // setTimeout("ShowBanners()",5000);

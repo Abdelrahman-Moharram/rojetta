@@ -6,5 +6,6 @@ app_name="home"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="index"),
+    path('s/<str:id>/', views.specialization, name="specialization"),
     path("<str:uuid>/", profile, name="profile"),
 ]
