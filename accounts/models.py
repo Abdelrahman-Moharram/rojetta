@@ -171,6 +171,9 @@ class Skill(models.Model):
 class Government(models.Model):
     name        = models.CharField(max_length=100, null=True, blank=True)
     ar_name     = models.CharField(max_length=100, verbose_name="المحافظة", null=True, blank=True)
+
+    def DocCount(self):
+        return Clinic.objects.filter(government=self).count()
     def __str__(self):
         return self.name
 class State(models.Model):
@@ -216,7 +219,7 @@ class Doctor(models.Model):
     specialization  = models.ForeignKey(Specialization, null=True, on_delete=models.CASCADE, verbose_name="التخصص")
     is_completed    = models.BooleanField(default=False)
     # phone           = models.ManyToManyField('Phone', blank=True)
-
+    
     def ClinicData(self):
         
         clinic = Clinic.objects.get(doctor=self)
