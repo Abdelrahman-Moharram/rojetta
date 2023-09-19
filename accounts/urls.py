@@ -11,5 +11,6 @@ urlpatterns = [
     path("add-doc/", addDocData, name="adddoc"),
     path("add-clinic/", addClinic, name="addClinic"),
     path("getStates/<str:name>/", getStates, name="getStates"),
-    path("upgrade-account/", upgradeAccount, name="upgradeAccount")
+    path("upgrade-account/", upgradeAccount, name="upgradeAccount"),
+    path("<str:uuid>/", profile, name="profile"),
 ]

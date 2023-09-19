@@ -17,12 +17,13 @@
             <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
                 {% for government in governments %}
                   <div class="form-check">
-                    <input onchange="filterGovernments('{{specialization.id}}')" class="form-check-input" type="checkbox" value="{{government.id}}" name="government" id="flexCheck{{government.id}}" {% if not government.DocCount %}disabled{% endif %}/>
+                    <input onchange="filterGovernments()" class="form-check-input" type="checkbox" value="{{government.id}}" name="government" id="flexCheck{{government.id}}" {% if not government.DocCount %}disabled{% endif %}/>
                     <label class="form-check-label" for="flexCheck{{government.id}}">{{government.name}} <span class="text-muted">({{government.DocCount}})</span></label>
                   </div>
                 {% endfor %}
             </div>
         </div>
+        
 
 
         <div class="col-lg-8 col-sm-12  my-4" id="docList">
@@ -43,7 +44,7 @@
                     <p class="my-3">
                        {{doctor.coverletter}}
                     </p>
-                    <a href="{% url 'home:profile' doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                    <a href="{% url 'accounts:profile' doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
                     </div>
                 </div>
                 {% endfor %}
@@ -69,7 +70,7 @@
 </section>
     
 <script>
-   async function  filterGovernments (id){
+   async function  filterGovernments (){
         var checkedBoxes = document.querySelectorAll('input[name=government]:checked');
         var docList = document.getElementById("docList") ;
         docList.innerHTML = `
@@ -80,7 +81,7 @@
         </div> `
 
         params = {"governments":checkedBoxes}
-        url = new URL("http://127.0.0.1:8000/s/"+id+"/doctors-goverments");
+        url = new URL("http://127.0.0.1:8000/doctors-goverments/");
         checkedBoxes.forEach(key => {
             url.searchParams.append("government",  key.value)
         })

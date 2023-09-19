@@ -149,4 +149,4 @@ function nextImage() {
     var id = document.getElementById("imageId");
     id.src = "images/" + images[count];
   }
-  // setTimeout("ShowBanners()",5000);
+  setTimeout("ShowBanners()",5000);

@@ -39,7 +39,7 @@ def register(request):
             
                 # logged in successfully after regestration
                 messages.info(request,user.username+" added succesfully")
-                return redirect("home:profile", uuid=user.uuid) 
+                return redirect("accounts:profile", uuid=user.uuid) 
             
             # logged in Failed after regestration
             messages.error(request,"Login Failed after registeration contact admin")

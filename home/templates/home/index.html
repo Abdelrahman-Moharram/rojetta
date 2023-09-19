@@ -38,6 +38,8 @@
 
       <div class="card search-doctor-baner">
         <div class="card-body text-center">
+          <form method="get" action="{% url 'home:search' %}">
+
           
           <div class="row g-3">
             <div class="col-sm-3">
@@ -50,7 +52,7 @@
                   aria-expanded="false"
                 >
                 <div class="form-outline  text-danger">
-                  <input type="text" id="form10Example1" class="form-control  text-danger" />
+                  <input autocomplete="off" type="text" id="form10Example1" name="specialization" class="form-control  text-danger" />
                   <label class="form-label text-danger" for="form10Example1"><i class="fas fa-stethoscope mx-2"></i> Specializations</label>
                 </div>
                 </div>
@@ -72,7 +74,7 @@
             </div>
             <div class="col-sm-3">
               <div class="form-outline text-success">
-                <input type="text" id="form10Example1" class="form-control text-success " />
+                <input autocomplete="off" type="text" id="form10Example1" name="name" class="form-control text-success " />
                 <label class="form-label text-success" for="form10Example1"><i class="fas fa-user-doctor mx-2"></i>Doctor Name</label>
               </div>
             </div>
@@ -86,7 +88,7 @@
                   aria-expanded="false"
                 >
                 <div class="form-outline">
-                  <input type="text" id="form3government" class="form-control text-primary" />
+                  <input autocomplete="off" type="text" id="form3government" name="government" class="form-control text-primary" />
                   <label class="form-label  text-primary" for="form10Example2"><i class="fas fa-map-location-dot mx-2"></i>City or Government</label>
                 </div>
                 </div>
@@ -117,7 +119,7 @@
                   aria-expanded="false"
                 >
                 <div class="form-outline">
-                  <input type="text" id="form3state" class="form-control text-info" />
+                  <input autocomplete="off" type="text" id="form3state" name="state" class="form-control text-info" />
                   <label class="form-label text-info" for="form10Example3"><i class="fas fa-map-pin mx-2"></i> State or Area</label>
                 </div>
                 </div>
@@ -131,11 +133,12 @@
                 </ul>
               </div>
             </div>
-            <button type="button" class="btn btn-primary"><i class="fas fa-magnifying-glass mx-4"></i>Search</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-magnifying-glass mx-4"></i>Search</button>
            
             
           </div>
-  
+          </form>
+          
         </div>
       </div>
     
