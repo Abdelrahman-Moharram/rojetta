@@ -165,7 +165,6 @@ def addDocData(request):
                 specialization = Specialization.objects.create(name=request.POST['specialization'])
 
             doc.specialization = specialization
-        print("\n\n\n\n>>>", "doc.skills.count() > 0=>",doc.skills.count() > 0 , "doc.specialization!=>", doc.specialization!="" ,  "image>> ",doc.image.url!="/media/users/logo.webp" ,"cover>", doc.coverletter!="" , "bio>", doc.bio!="")
         if doc.skills.count() > 0 and doc.specialization!="" and doc.image.url!="/media/users/logo.webp" and doc.coverletter!="" and doc.bio!="":
             doc.is_completed = True
         doc.save()

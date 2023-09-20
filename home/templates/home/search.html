@@ -2,7 +2,7 @@
 
 
 {% block title %}
-    {{specialization.name}}
+    search
 {% endblock title %}
 
 
@@ -12,39 +12,98 @@
 <section style="background-color: #eee;">
     <div class="container-fluid py-5">
       <div class="row justify-content-space-between mb-5">
-
+        
         <div class="col-lg-2 col-sm-12 my-4">
             <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
                 {% for government in governments %}
                   <div class="form-check">
-                    <input onchange="filterGovernments()" class="form-check-input" type="checkbox" value="{{government.id}}" name="government" id="flexCheck{{government.id}}" {% if not government.DocCount %}disabled{% endif %}/>
+                    <input 
+                     onchange="filterGovernments()" 
+                     class="form-check-input" 
+                     type="checkbox" 
+                     value="{{government.id}}" 
+                     name="government" 
+                     id="flexCheck{{government.id}}"
+                     {% if not government.DocCount %}disabled{% endif %}
+                     
+                     {% if request.GET.government == government.ar_name or request.GET.government == government.name %}
+                        checked
+                     {% endif %}
+                        
+                     />
                     <label class="form-check-label" for="flexCheck{{government.id}}">{{government.name}} <span class="text-muted">({{government.DocCount}})</span></label>
+                  </div>
+                  {{government.state.name}}
+                {% endfor %}
+            </div>
+
+            <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
+                {% for specialization in specializations %}
+                  <div class="form-check">
+                    <input 
+                     onchange="filterGovernments()" 
+                     class="form-check-input" 
+                     type="checkbox" 
+                     value="{{specialization.id}}" 
+                     name="specialization" 
+                     id="flexCheck{{specialization.id}}"
+                     
+                     {% if request.GET.specialization == specialization.name or request.GET.specialization == specialization.ar_name %}
+                        checked
+                     {% endif %}
+                        
+                     />
+                    <label class="form-check-label" for="flexCheck{{specialization.id}}">{{specialization.name}}</label>
                   </div>
                 {% endfor %}
             </div>
+            
+            <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
+                  <div class="form-check">
+                    <input 
+                     onchange="filterGovernments()" 
+                     class="form-check-input" 
+                     type="checkbox"  
+                     name="is_opened" 
+                     id="flexCheck{{clinic.id}}"                        
+                     />
+                    <label class="form-check-label" for="flexCheck{{clinic.id}}">available now</label>
+                  </div>
+            </div>
+
         </div>
-        
+
+
 
 
         <div class="col-lg-8 col-sm-12  my-4" id="docList">
 
   
-            {% if doctors %}
-                {% for doctor in doctors %}
+            {% if clinics %}
+                {% for clinic in clinics %}
                 <div class="d-flex position-relative bg-white p-3 rounded default-bx-shadow my-3">
                     <img
-                        src={{doctor.image.url}}
+                        src={{clinic.doctor.image.url}}
                         class="flex-shrink-0 me-3"
                         style="max-width: 12rem"
                         alt="hollywood sign"
                     />
                     <div>
-                    <h5 class="mt-0 mb-3">{{doctor.user.username}}</h5>
-                    <span class="text-muted my-3">{{doctor.bio}}</span>
-                    <p class="my-3">
-                       {{doctor.coverletter}}
-                    </p>
-                    <a href="{% url 'accounts:profile' doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                    <h5 class="mt-0 mb-3">{{clinic.doctor.user.username}}</h5>
+                    <span class="text-muted my-3">{{clinic.doctor.bio}}</span>
+                    <div class="my-1 mb-2">
+                       <div>address: {{clinic.detailLocation}}, {{clinic.state.ar_name}}, {{clinic.government.ar_name}}</div>
+                       <div>
+                        
+                        {% if clinic.is_opened %}
+                            opened now
+                            {% else %}
+                            {{clinic.last_opened|default_if_none:'Never Opened'}}
+                        {% endif %}
+                            
+                       </div>
+                    </div>
+                    <a href="{% url 'accounts:profile' clinic.doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
                     </div>
                 </div>
                 {% endfor %}
@@ -71,7 +130,9 @@
     
 <script>
    async function  filterGovernments (){
-        var checkedBoxes = document.querySelectorAll('input[name=government]:checked');
+        var checkedGovernments = document.querySelectorAll('input[name=government]:checked');
+        var checkedSpecializations = document.querySelectorAll('input[name=specialization]:checked');
+        var checkedIs_opened = document.querySelectorAll('input[name=is_opened]:checked');
         var docList = document.getElementById("docList") ;
         docList.innerHTML = `
         <div class="d-flex justify-content-center position-relative bg-white p-3 rounded default-bx-shadow my-3">
@@ -80,10 +141,16 @@
             </div> 
         </div> `
 
-        params = {"governments":checkedBoxes}
-        url = new URL("http://127.0.0.1:8000/doctors-goverments/");
-        checkedBoxes.forEach(key => {
+        params = {"governments":checkedGovernments}
+        url = new URL("http://127.0.0.1:8000/filter/");
+        checkedGovernments.forEach(key => {
             url.searchParams.append("government",  key.value)
+        })
+        checkedSpecializations.forEach(key => {
+            url.searchParams.append("specialization",  key.value)
+        })
+        checkedIs_opened.forEach(key => {
+            url.searchParams.append("is_opened",  key.value)
         })
         
         var res = await fetch(url)
@@ -94,7 +161,7 @@
                 docList.innerHTML +=`
                 <div class="d-flex position-relative bg-white p-3 rounded default-bx-shadow my-3">
                     <img
-                        src=http://127.0.0.1:8000/media/${e['image']}
+                        src=${e['image']}
                         class="flex-shrink-0 me-3"
                         style="max-width: 12rem"
                         alt="hollywood sign"
@@ -102,15 +169,22 @@
                     <div>
                     <h5 class="mt-0 mb-3">${e['username']}</h5>
                     <span class="text-muted my-3">${e['bio']}</span>
-                    <p class="my-3">
-                        ${e['coverletter']}
-                    </p>
-                    <a href="/${e['user_id']}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                    
+
+                    <div class="my-1 mb-2">
+                       <div>address: ${e['detailLocation']}, ${e['state']}, ${e['government']}</div>
+                       <div>
+                        ${e['is_opened'] ? 'opened':e['last_opened']||'closed'}
+                            
+                       </div>
+                    <a href="/accounts/${e['user_id']}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
                     </div>
                 </div>
             `
             })
             
+        }else{
+            docList.innerHTML ='<h1 class="text-center "> No doctors added yet</h1>'
         }
     }
 
