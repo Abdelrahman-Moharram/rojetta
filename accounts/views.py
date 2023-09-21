@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, HttpResponse
 from django.contrib import messages
-from .models import Clinic, Doctor, Faculty, Government, Skill, SkillType, Specialization, State, User
+from .models import Clinic, Doctor, Faculty, Government, Phone, Skill, SkillType, Specialization, State, User
 from .forms import add_user_form
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -205,7 +205,21 @@ def addClinic(request):
             clinic.detailLocation = request.POST['detailLocation']
         if 'mapsLocation' in request.POST:
             clinic.mapsLocation = request.POST['mapsLocation']
+        if 'phone' in request.POST:
+            phones = request.POST.getlist('phone')
+            clinic_phones = len(clinic.phones.all())
+            for index in range(len(phones)):
+                if index <= clinic_phones-1:
+                    currphone = Phone.objects.get(id=clinic.phones.all()[index].id)
+                    currphone.phone = phones[index].strip()
+                    currphone.save()
+                else:
+                    currphone = Phone.objects.create(phone=phones[index])
+                    currphone.save()
+                    clinic.phones.add(currphone)
+                
         clinic.save()
+        return redirect("accounts:profile", clinic.doctor.user.uuid)
     
     return render(request, 'accounts/clinicform.html', {"clinic":clinic, 'governments':Government.objects.all()})
 
@@ -213,57 +227,3 @@ def addClinic(request):
 
 
 
-
-################################## NOT IMPLEMENTED YET ##################################
-
-@login_required
-def index(request): ## for sub-admin
-    return render(request, "accounts/index.html", {"users":User.objects.all()})
-
-@login_required
-def addUser(request): ## for sub-admin & super-admin
-    form   = add_user_form()
-    if request.method == "POST":
-        if request.POST['password'] != request.POST['retypepassword']:
-            messages.error(request,"Password doesn't match Retype Password")
-            return redirect("accounts:register")
-        form = add_user_form(request.POST)
-
-        if form.is_valid():
-            form = form.save()
-            messages.info(request,form.username+" added succesfully")
-            if "_submit" in  request.POST:
-                return redirect("accounts:add")
-            return redirect("accounts:index") # جدول فيه كل اليوزرز
-    return render(request,"accounts/addUser.html",{"form":form})
-
-
-
-
-
-
-
-
-
-@login_required
-def edit(request, militry_id):
-    user = User.objects.get(militry_id=militry_id)
-    if  request.method == "POST":
-        user.fullname = request.POST['fullname']
-        user.militry_id = request.POST['militry_id']
-        user.moahl = request.POST['moahl']
-        user.tagned_date = request.POST['tagned_date']
-        user.end_date = request.POST['end_date']
-        user.password = request.POST['password']
-        user.save()
-        messages.info(request,"تم تعديل بيانات "+user.fullname+ " بنجاح")
-        return redirect("accounts:index")
-    return render(request,"accounts/addUser.html",{"u":user})
-@login_required
-def delete(request, militry_id):
-    user = User.objects.get(militry_id=militry_id)
-    user.delete()
-    return redirect("accounts:index")
-
-
-######################################################################################################

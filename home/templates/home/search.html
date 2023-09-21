@@ -12,36 +12,21 @@
 <section style="background-color: #eee;">
     <div class="container-fluid py-5">
       <div class="row justify-content-space-between mb-5">
+
+
+        
+
         
         <div class="col-lg-2 col-sm-12 my-4">
-            <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
-                {% for government in governments %}
-                  <div class="form-check">
-                    <input 
-                     onchange="filterGovernments()" 
-                     class="form-check-input" 
-                     type="checkbox" 
-                     value="{{government.id}}" 
-                     name="government" 
-                     id="flexCheck{{government.id}}"
-                     {% if not government.DocCount %}disabled{% endif %}
-                     
-                     {% if request.GET.government == government.ar_name or request.GET.government == government.name %}
-                        checked
-                     {% endif %}
-                        
-                     />
-                    <label class="form-check-label" for="flexCheck{{government.id}}">{{government.name}} <span class="text-muted">({{government.DocCount}})</span></label>
-                  </div>
-                  {{government.state.name}}
-                {% endfor %}
-            </div>
+
+
 
             <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
+                <p class="shadow-10 bg-white text-center fw-bold p-1 rounded-3">Specialization</p>
                 {% for specialization in specializations %}
                   <div class="form-check">
                     <input 
-                     onchange="filterGovernments()" 
+                     onchange="sideNavFilter()" 
                      class="form-check-input" 
                      type="checkbox" 
                      value="{{specialization.id}}" 
@@ -61,7 +46,7 @@
             <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
                   <div class="form-check">
                     <input 
-                     onchange="filterGovernments()" 
+                     onchange="sideNavFilter()" 
                      class="form-check-input" 
                      type="checkbox"  
                      name="is_opened" 
@@ -70,6 +55,33 @@
                     <label class="form-check-label" for="flexCheck{{clinic.id}}">available now</label>
                   </div>
             </div>
+
+
+            <div class="position-relative bg-white p-3 rounded default-bx-shadow  my-3">
+                <p class="shadow-10 bg-white text-center fw-bold p-1 rounded-3">City</p>
+                {% for government in governments %}
+                  <div class="form-check">
+                    <input 
+                     onchange="sideNavFilter()" 
+                     class="form-check-input" 
+                     type="checkbox" 
+                     value="{{government.id}}" 
+                     name="government" 
+                     id="flexCheck{{government.id}}"
+                     {% if not government.DocCount %}disabled{% endif %}
+                     
+                     {% if request.GET.government == government.ar_name or request.GET.government == government.name %}
+                        checked
+                     {% endif %}
+                        
+                     />
+                    <label class="form-check-label" for="flexCheck{{government.id}}">{{government.name}} <span class="text-muted">({{government.DocCount}})</span></label>
+                  </div>
+                  {{government.state.name}}
+                {% endfor %}
+            </div>
+
+            
 
         </div>
 
@@ -96,19 +108,28 @@
                        <div>
                         
                         {% if clinic.is_opened %}
-                            opened now
+                            open now
                             {% else %}
                             {{clinic.last_opened|default_if_none:'Never Opened'}}
                         {% endif %}
                             
                        </div>
                     </div>
-                    <a href="{% url 'accounts:profile' clinic.doctor.user.uuid %}" class="btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                    <div class="row justify-content-spacec-between">
+                        <a href="{% url 'accounts:profile' clinic.doctor.user.uuid %}" class="col-6 btn btn-primary stretched-link mt-3"> Checkout and Book <i class='mx-1 fas fa-angles-right'></i></a>
+                        <span class="col-6 fw-bold m-auto d-flex justify-content-end">
+                        {% if clinic.price %}
+                            {{clinic.price}} L.E
+                        {% else %}
+                            
+                        {% endif %}
+                            </span>
+                    </div>
                     </div>
                 </div>
                 {% endfor %}
                 {% else %}
-                <h1 class="text-center "> No doctors added yet</h1>
+                <h1 class="text-center "> No doctors available</h1>
             {% endif %}
 
 
@@ -129,7 +150,7 @@
 </section>
     
 <script>
-   async function  filterGovernments (){
+   async function  sideNavFilter (){
         var checkedGovernments = document.querySelectorAll('input[name=government]:checked');
         var checkedSpecializations = document.querySelectorAll('input[name=specialization]:checked');
         var checkedIs_opened = document.querySelectorAll('input[name=is_opened]:checked');
@@ -184,7 +205,7 @@
             })
             
         }else{
-            docList.innerHTML ='<h1 class="text-center "> No doctors added yet</h1>'
+            docList.innerHTML ='<h1 class="text-center "> No doctors available</h1>'
         }
     }
 

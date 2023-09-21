@@ -101,10 +101,11 @@ function addSkill(){
     var skillsLi = null;
     skillsLi = document.getElementById('PhoneItem');
     skillsLi.innerHTML += `
-    <br>
-    <div class="col form-outline">
-            <input name="phone" type="text" id="form3phone" class="form-control" />
-            <label class="form-label" for="form3Bio">phone</label>
+    <div class="col-3 d-inline-block my-3">
+      <div class="form-outline">
+              <input name="phone" type="text" id="form3phone" class="form-control" />
+              <label class="form-label" for="form3Bio">phone</label>
+      </div>
     </div>
     `;
   }

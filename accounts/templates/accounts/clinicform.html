@@ -103,16 +103,31 @@
           </li>
           
 
-          <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+          <li class="list-group-item row justify-content-center align-items-center p-3"  id="PhoneItem">
             
-            <div class="col" id="PhoneItem">
-              <div class="col form-outline">
-                <input value="" name="phone" type="text" id="form3phone" class="form-control" />
-                <label class="form-label" for="form3Bio">phone</label>
+            
+            {% if clinic.phones.all %}
+            
+            {% for phone in clinic.phones.all %} 
+              <div class="col-3 d-inline-block my-3">
+                <div class="form-outline">
+                  <input value="{{phone.phone}}" name="phone" type="text" id="form3phone" class="form-control" />
+                  <label class="form-label" for="form3Bio">phone</label>
+                </div>
               </div>
-            </div>
+            {% endfor %}
+              
+            {% else %}
+              <div class="col-3 d-inline-block my-3" id="PhoneItem">
+                <div class="form-outline">
+                  <input value="" name="phone" type="text" id="form3phone" class="form-control" />
+                  <label class="form-label" for="form3Bio">phone</label>
+                </div>
+              </div>
+            {% endif %}
+              
 
-            <div class="d-block">
+            <div class="">
               <button type="button" onclick="addPhone()" class="btn btn-success" style="float: right;">Add a new Phone</button>
             </div>
           </li>
@@ -121,6 +136,7 @@
           
           
           
+          <hr>
         </ul>
       </div>
     </div>

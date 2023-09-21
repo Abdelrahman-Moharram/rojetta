@@ -257,9 +257,9 @@ class Clinic(models.Model):
     detailLocation  = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان المفصل")
     mapsLocation    = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان علي خرائط جوجل")
     price           = models.FloatField(null=True, blank=True,)
-    is_opened        = models.BooleanField(default=False)
+    is_opened       = models.BooleanField(default=False)
     last_opened     = models.DateTimeField(null=True, blank=True)
-    phone           = models.ManyToManyField(Phone, blank=True)
+    phones          = models.ManyToManyField(Phone, blank=True)
 
     def __str__(self):
         return str(self.doctor)

@@ -52,9 +52,8 @@ def clinicFilter(request):
         clinic['ar_state'] =  c.state.name
         clinic['government'] =  c.government.name
         clinic['ar_government'] =  c.government.ar_name
-        
 
-        
+    
     return JsonResponse({
         "doctors":list(clinics)
     })
