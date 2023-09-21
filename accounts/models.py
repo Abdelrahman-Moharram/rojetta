@@ -249,6 +249,10 @@ def create_doctor(sender, instance, **kwargs):
 
         
 
+class TimeTable(models.Model):
+    date_time       = models.DateTimeField(auto_now=False, auto_now_add=False)
+
+
 
 class Clinic(models.Model):
     doctor          = models.ForeignKey(Doctor, on_delete=models.CASCADE) # doctor may has more than one Clinic
@@ -260,15 +264,20 @@ class Clinic(models.Model):
     is_opened       = models.BooleanField(default=False)
     last_opened     = models.DateTimeField(null=True, blank=True)
     phones          = models.ManyToManyField(Phone, blank=True)
+    time_tables      = models.ManyToManyField(TimeTable, blank=True)
 
     def __str__(self):
         return str(self.doctor)
 
 
-
 class Patient(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
-    image           = models.ImageField(default="users/logo.png",upload_to=imagesave, verbose_name="صورة شخصية", null=True, height_field=None, width_field=None)
     government      = models.ForeignKey(Government, on_delete=models.PROTECT,verbose_name="المحافظة")
     state           = models.ForeignKey(State, on_delete=models.PROTECT, verbose_name="المنطقة")
     phone           = models.ManyToManyField(Phone, blank=True)
+
+
+class Reservasion(models.Model):
+    date_time       = models.DateTimeField(auto_now=False, auto_now_add=False, verbose_name="Reservasion Date")
+    patient         = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    clinic          = models.ForeignKey(Clinic, on_delete=models.CASCADE)
