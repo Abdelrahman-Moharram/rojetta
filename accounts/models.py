@@ -42,7 +42,7 @@ class accountManager(BaseUserManager):
             lname = lname,
         )
 
-        # user.set_password(password)
+        user.set_password(password)
         user.save(using = self._db)
         return user
     
@@ -57,7 +57,7 @@ class accountManager(BaseUserManager):
         user.is_admin= True
         user.is_staff= True
         user.is_superuser= True
-        user.save(using=self._db)
+        user.save(using= self._db)
         return user
         
         # return user 
@@ -138,7 +138,7 @@ class User(AbstractBaseUser):
         # Save the provided password in hashed format
         self.username = cap(slugify(self.fname+"-"+self.lname))
         user = super(User, self)
-        user.set_password(self.password)
+        # user.set_password(self.password)
         user.save(*args, **kwargs)
         return user
 
