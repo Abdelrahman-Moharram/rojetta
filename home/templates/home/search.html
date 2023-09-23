@@ -163,7 +163,7 @@
         </div> `
 
         params = {"governments":checkedGovernments}
-        url = new URL("http://192.168.1.105:8000/filter/");
+        url = new URL("http://127.0.0.1:8000/filter/");
         checkedGovernments.forEach(key => {
             url.searchParams.append("government",  key.value)
         })

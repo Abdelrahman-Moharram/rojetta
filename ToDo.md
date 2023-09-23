@@ -7,9 +7,12 @@
     - manage his profile 
     - manage the clinic time table 
 
+#### Login
+
+- make user login with email or username or phonenumber
 
 ## home 
-- search page to find doctors with name or location or specialization and rate
+- search page to find doctors with name or location or specialization and rate -> done except rate
 - user can book with a doctor in nearst location and time
 
 
