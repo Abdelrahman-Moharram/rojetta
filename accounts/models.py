@@ -5,6 +5,8 @@ import uuid
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from clinic.models import Clinic
+
 
 def imagesave(instance,filename):
     imagename , extension = filename.split(".")
@@ -249,35 +251,9 @@ def create_doctor(sender, instance, **kwargs):
 
         
 
-class TimeTable(models.Model):
-    date_time       = models.DateTimeField(auto_now=False, auto_now_add=False)
-
-
-
-class Clinic(models.Model):
-    doctor          = models.ForeignKey(Doctor, on_delete=models.CASCADE) # doctor may has more than one Clinic
-    government      = models.ForeignKey(Government, null=True, blank=True, on_delete=models.PROTECT,verbose_name="المحافظة")
-    state           = models.ForeignKey(State, null=True, blank=True, on_delete=models.PROTECT, verbose_name="المنطقة")
-    detailLocation  = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان المفصل")
-    mapsLocation    = models.CharField(max_length=555, null=True, blank=True, verbose_name="العنوان علي خرائط جوجل")
-    price           = models.FloatField(null=True, blank=True,)
-    is_opened       = models.BooleanField(default=False)
-    last_opened     = models.DateTimeField(null=True, blank=True)
-    phones          = models.ManyToManyField(Phone, blank=True)
-    time_tables      = models.ManyToManyField(TimeTable, blank=True)
-
-    def __str__(self):
-        return str(self.doctor)
-
-
 class Patient(models.Model):
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
-    government      = models.ForeignKey(Government, on_delete=models.PROTECT,verbose_name="المحافظة")
-    state           = models.ForeignKey(State, on_delete=models.PROTECT, verbose_name="المنطقة")
-    phone           = models.ManyToManyField(Phone, blank=True)
+    government      = models.ForeignKey(to='accounts.Government', on_delete=models.PROTECT,verbose_name="المحافظة")
+    state           = models.ForeignKey(to='accounts.State', on_delete=models.PROTECT, verbose_name="المنطقة")
+    phone           = models.ManyToManyField(to='accounts.Phone', blank=True)
 
-
-class Reservasion(models.Model):
-    date_time       = models.DateTimeField(auto_now=False, auto_now_add=False, verbose_name="Reservasion Date")
-    patient         = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    clinic          = models.ForeignKey(Clinic, on_delete=models.CASCADE)

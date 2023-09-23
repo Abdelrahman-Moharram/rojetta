@@ -110,11 +110,14 @@ def upgradeAccount(request):
     return redirect("accounts:adddoc")
 
 # 
-@login_required
-def addDocData(request):
+def is_doctor(request):
     if not request.user.is_doctor:
         messages.error(request,request.user.username+"<a class='child-arrow' href='/accounts/upgrade-account/'> Not registered as Doctor do you want to upgrade your account? <br> <span class='fw-bold text-primary'>go here to complete <i class='text-primary fas fa-angles-right'></i></span></a>")
         return redirect("home:index")
+
+@login_required
+def addDocData(request):
+    is_doctor(request)
     try:
         doc = Doctor.objects.get(user=request.user)
     except:

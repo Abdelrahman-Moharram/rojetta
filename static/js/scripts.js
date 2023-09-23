@@ -117,3 +117,39 @@ function addSkill(){
   ]
   banner=0
 
+
+  function ShowBanners(){ 
+    var bannerImage = document.getElementById('banner')
+    if (bannerImage){
+      if (document.images){
+        banner++
+        if (banner==MyBanners.length) {
+          banner=0
+        }
+        bannerImage.style.backgroundImage= "url('"+MyBanners[banner]+"')"
+        setTimeout("ShowBanners()",5000)
+    }
+    }
+}
+function previousImage() {
+      var bannerImage = document.getElementById('banner')
+        if(count!=0){
+          count--;
+        }
+        else if(banner==0){
+          banner=MyBanners.length
+        }
+        bannerImage.style.backgroundImage= "url('"+MyBanners[banner]+"')";
+        setTimeout("ShowBanners()",5000)
+
+}
+function nextImage() {
+    if(count!=4)
+        count++;
+    else if(banner==MyBanners.length){
+        banner=0
+    }
+    var id = document.getElementById("imageId");
+    id.src = "images/" + images[count];
+  }
+  setTimeout("ShowBanners()",5000);

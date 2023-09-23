@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from accounts.models import Specialization, Government, Doctor, Clinic, User, State
+from accounts.models import Specialization, Government, Doctor, User, State
 from django.db.models import Q
-
+from clinic.models import Clinic
 def index(request):
     return render(request, 'home/index.html', {"specializations":Specialization.objects.all(), "governments":Government.objects.all()})
 
@@ -59,6 +59,12 @@ def clinicFilter(request):
     })
 
 
+def clinic(request, id):
+    return render(request, "clinic/clinic.html", {'clinic':Clinic.objects.get(id=id)})
+
+def manage_clinic(request):
+
+    return render(request, "home/manageClinic.html", {})
 
 def advancedSearchDoctor(request):
     doctors = Doctor.objects.filter(
